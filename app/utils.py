@@ -21,6 +21,11 @@ def get_supported_formats() -> list[str]:
         "opus",
     ]
 
+def is_supported_format(file_path: str) -> bool:
+    """Check if the file format is supported."""
+    ext = file_path.split('.')[-1].lower()
+    return ext in get_supported_formats()
+
 def scan_music_folder(path):
     """Scan the music folder for supported audio files."""
     supported_formats = set(get_supported_formats())
@@ -64,3 +69,4 @@ def write_json(path, data) -> bool: # bool indicate success or failure
         return True
     except Exception as e:
         return False
+

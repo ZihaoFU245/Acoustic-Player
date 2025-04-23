@@ -16,8 +16,7 @@ music_player/
 │   │   - load_file(path), set_volume(level), get_position(), set_position(pos)
 │   ├── metadata.py              # Metadata handling using Mutagen
 │   │   - class MetadataManager:
-│   │   - get_metadata(path): Return song metadata (title, artist, album, etc).
-│   │   - set_metadata(path, data): Update tags.
+│   │   - get_metadata(path): Return song metadata (title, artist, album, etc). ✅
 │   ├── playlist.py              # Playlist management
 │   │   - class PlaylistManager:
 │   │   - add_track(path), remove_track(index), move_track(old, new)
@@ -37,10 +36,10 @@ music_player/
 │   │   - register_hotkeys(), unregister_hotkeys()
 │   │   - handle_hotkey(event): Respond to hotkey events.
 │   ├── utils.py                 # Common utility functions
-│   │   - format_time(seconds): Convert seconds to mm:ss.
-│   │   - get_supported_formats(): Return list of supported audio formats.
-│   │   - scan_music_folder(path): Recursively find audio files.
-│   │   - read_json(path), write_json(path, data): Config helpers.
+│   │   - format_time(seconds): Convert seconds to mm:ss. ✅
+│   │   - get_supported_formats(): Return list of supported audio formats. ✅
+│   │   - scan_music_folder(path): Recursively find audio files. ✅ ! it is not recursively finding , only the selected folder
+│   │   - read_json(path), write_json(path, data): Config helpers. ✅
 │   ├── styles/                  # CSS styling & theming
 │   │   ├── dark_theme.css
 │   │   ├── light_theme.css
