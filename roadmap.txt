@@ -1,0 +1,37 @@
+music_player/
+├── main.py                      # Entry point of the application
+├── app/                         # Main application package
+│   ├── __init__.py
+│   ├── main_window.py           # Main window class (PySide6 GUI)
+│   ├── player.py                # Core music player functionality
+│   ├── metadata.py              # Metadata handling using Mutagen
+│   ├── playlist.py              # Playlist management
+│   ├── lyrics.py                # (Optional) LRC/online lyrics support
+│   ├── visualizer.py            # (Optional) Audio visualizer
+│   ├── hotkeys.py               # (Optional) Global media hotkeys
+│   ├── utils.py                 # Common utility functions
+│   ├── styles/                  # CSS styling & theming
+│   │   ├── dark_theme.css
+│   │   ├── light_theme.css
+│   │   └── styles.py            # Style manager (dynamic theme switch)
+│   ├── widgets/                 # Custom and reusable widgets
+│   │   ├── seek_slider.py       # Track progress slider
+│   │   ├── volume.py            # Volume control widget
+│   │   ├── visualizer.py        # Audio visualizer widget (bars/pulses)
+│   │   ├── lyrics_display.py    # (Optional) Synchronized lyrics display
+│   │   └── __init__.py
+│   └── resources/               # Static resources
+│       ├── icons/               # App icons, control icons, theme icons
+│       ├── images/              # Default album arts, UI backgrounds
+│       └── resources.py         # PySide6 compiled resource file (qrc)
+├── assets/                      # User-imported assets (e.g., album art)
+├── config/                      # App config (settings, themes, saved state)
+│   ├── default_config.json
+│   └── user_config.json
+├── tests/                       # Unit and integration tests
+│   ├── test_player.py
+│   ├── test_playlist.py
+│   └── ...
+├── requirements.txt             # Python dependencies
+├── README.md                    # Project overview
+└── .gitignore
