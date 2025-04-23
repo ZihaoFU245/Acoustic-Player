@@ -1,24 +1,61 @@
 music_player/
 ├── main.py                      # Entry point of the application
+│   - main(): Application startup, argument parsing, and event loop.
+│   - load_config(): Load user or default config.
+│   - setup_logging(): Initialize logging for debugging.
 ├── app/                         # Main application package
 │   ├── __init__.py
 │   ├── main_window.py           # Main window class (PySide6 GUI)
+│   │   - class MainWindow(QMainWindow): Main application window.
+│   │   - setup_ui(): Build and arrange widgets.
+│   │   - connect_signals(): Connect UI actions to player/playlist methods.
+│   │   - update_theme(theme): Apply selected theme to UI.
 │   ├── player.py                # Core music player functionality
+│   │   - class MusicPlayer(QObject): Handles playback logic.
+│   │   - play(), pause(), stop(), next_track(), previous_track()
+│   │   - load_file(path), set_volume(level), get_position(), set_position(pos)
 │   ├── metadata.py              # Metadata handling using Mutagen
+│   │   - class MetadataManager:
+│   │   - get_metadata(path): Return song metadata (title, artist, album, etc).
+│   │   - set_metadata(path, data): Update tags.
 │   ├── playlist.py              # Playlist management
+│   │   - class PlaylistManager:
+│   │   - add_track(path), remove_track(index), move_track(old, new)
+│   │   - load_playlist(path), save_playlist(path)
+│   │   - get_current_track(), next_track(), previous_track()
 │   ├── lyrics.py                # (Optional) LRC/online lyrics support
+│   │   - class LyricsManager:
+│   │   - load_lyrics(path): Load LRC file.
+│   │   - fetch_online_lyrics(title, artist): Download lyrics from web.
+│   │   - sync_lyrics(position): Return current lyric line.
 │   ├── visualizer.py            # (Optional) Audio visualizer
+│   │   - class AudioVisualizer:
+│   │   - process_audio_data(data): Analyze audio for visualization.
+│   │   - update_visualization(): Update visualizer widget.
 │   ├── hotkeys.py               # (Optional) Global media hotkeys
+│   │   - class HotkeyManager:
+│   │   - register_hotkeys(), unregister_hotkeys()
+│   │   - handle_hotkey(event): Respond to hotkey events.
 │   ├── utils.py                 # Common utility functions
+│   │   - format_time(seconds): Convert seconds to mm:ss.
+│   │   - get_supported_formats(): Return list of supported audio formats.
+│   │   - scan_music_folder(path): Recursively find audio files.
+│   │   - read_json(path), write_json(path, data): Config helpers.
 │   ├── styles/                  # CSS styling & theming
 │   │   ├── dark_theme.css
 │   │   ├── light_theme.css
 │   │   └── styles.py            # Style manager (dynamic theme switch)
+│   │       - class StyleManager:
+│   │       - apply_theme(theme): Apply CSS theme to app.
 │   ├── widgets/                 # Custom and reusable widgets
 │   │   ├── seek_slider.py       # Track progress slider
+│   │   │   - class SeekSlider(QSlider): Custom slider for track position.
 │   │   ├── volume.py            # Volume control widget
+│   │   │   - class VolumeControl(QWidget): Volume slider/mute button.
 │   │   ├── visualizer.py        # Audio visualizer widget (bars/pulses)
+│   │   │   - class VisualizerWidget(QWidget): Draws audio visualization.
 │   │   ├── lyrics_display.py    # (Optional) Synchronized lyrics display
+│   │   │   - class LyricsDisplay(QWidget): Shows synced lyrics.
 │   │   └── __init__.py
 │   └── resources/               # Static resources
 │       ├── icons/               # App icons, control icons, theme icons
@@ -35,3 +72,11 @@ music_player/
 ├── requirements.txt             # Python dependencies
 ├── README.md                    # Project overview
 └── .gitignore
+
+Notes:
+- utils.py is recommended for reusable helpers (file I/O, formatting, scanning folders, config read/write, etc).
+- For each file, implement the listed classes and functions as described above.
+- Optional modules (lyrics, visualizer, hotkeys, lyrics_display) can be implemented as needed for extra features.
+- Use widgets/ for custom PySide6 widgets to keep main_window.py clean.
+- Use styles/ for all theming and dynamic style switching.
+- Use resources/ for static files and PySide6 resource compilation.
