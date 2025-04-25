@@ -1,9 +1,10 @@
-# -*- coding: utf-8 -*-
-from . import utils
+from app import utils
 import os
 from PIL import Image
 import io
 from mutagen import File
+import base64
+import mutagen.flac
 
 class MetadataManager:
     """Class to manage metadata of audio files."""
@@ -61,8 +62,6 @@ class MetadataManager:
                     album_art = value.data
                     break
                 elif key_lower == 'metadata_block_picture':
-                    import base64
-                    import mutagen.flac
                     try:
                         pic = mutagen.flac.Picture(base64.b64decode(value[0]))
                         album_art = pic.data
@@ -78,13 +77,28 @@ class MetadataManager:
         return info, duration, album_art
 
     @staticmethod
-    def get_duration(file_path: str) -> float:
-        """Get the duration of the audio file."""
+    def get_duration(file_path: str , is_formatted=False) -> str:
+        """
+        Get the duration of the audio file.
+
+        Args:
+            file_path (str): Path to the audio file.
+            is_formatted (bool): If True, return duration in mm:ss format.
+
+        Returns:
+            - Duration in seconds if is_formatted is False
+            - Formatted duration (mm:ss) if is_formatted is True
+        """
         audio = File(file_path)
         if audio is None or not hasattr(audio, 'info'):
             raise ValueError(f"Unsupported or unrecognized file format: {file_path}")
 
-        return getattr(audio.info, 'length', 0.0)
+        length = getattr(audio.info, 'length', 0.0)
+
+        if is_formatted:
+            return utils.format_time(length)
+        else:
+            return str(length)
     
     @staticmethod
     def get_album_art(file_path):
@@ -119,9 +133,3 @@ class MetadataManager:
            
         except Exception as e:
             raise ValueError(f"Error retrieving album art: {e}")
-
-
-
-
-
-

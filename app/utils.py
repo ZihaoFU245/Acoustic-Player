@@ -2,11 +2,11 @@ import time
 import os
 import json
 
-def format_time(seconds: float) -> tuple[float , float]:
-    """Convert seconds to minutes and seconds."""
+def format_time(seconds: float) -> str:
+    """Format seconds into a string of the form mm:ss."""
     minutes = int(seconds // 60)
     seconds = int(seconds % 60)
-    return minutes, seconds
+    return f"{minutes:02}:{seconds:02}"
 
 def get_supported_formats() -> list[str]:
     """Get a list of supported formats."""
