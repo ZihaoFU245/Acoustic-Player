@@ -5,6 +5,20 @@ import soundfile as sf
 from typing import Any
 from ..utils import is_supported_format  
 
+"""
+Acoustic Player Music Player Module
+
+Further implementation details:
+- The current `sf.read()` method reads the entire file into memory.
+  * This is not ideal for large files.
+  * We can implement streaming in the future.
+  * Implement a method to read the file in chunks and stream it to the output device.
+  * Consider using a queue or buffer to manage audio data for smoother playback.
+
+- Implement speed control for playback.
+  * This can be done by adjusting the sample rate or using a library that supports variable speed playback.
+  * Consider using `sounddevice`'s `set_srate()` method to change the sample rate dynamically.
+"""
 
 class MusicPlayer:
     """
@@ -44,8 +58,7 @@ class MusicPlayer:
         self._is_playing: bool = False
         self._is_paused: bool = False
 
-    @staticmethod
-    def _choose_dtype(info_subtype: str) -> np.dtype:
+    def _choose_dtype(self, info_subtype: str) -> np.dtype:
         """
         Determine the appropriate NumPy data type based on the subtype of the audio file.
 

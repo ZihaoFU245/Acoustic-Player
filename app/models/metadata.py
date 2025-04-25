@@ -7,8 +7,26 @@ import base64
 import mutagen.flac
 from .. import utils
 
+"""
+Module for managing metadata of audio files.
+
+Use in the Acoustic Player Application:
+- Read metadata in a provided/imported audio folder.
+- Extract album art and duration from audio files.
+- Save them in a JSON file as Cache.
+"""
+
 class MetadataManager:
-    """Class to manage metadata of audio files."""
+    """
+    Module for managing metadata of audio files.
+    This module provides functionality to extract metadata, duration, and album art from audio files.
+    It uses the mutagen library to handle various audio formats.
+
+    Methods:
+        - get_metadata(file_path: str) -> tuple: Extracts metadata, duration, and album art from the audio file.
+        - get_duration(file_path: str, is_formatted=True) -> str: Returns the duration of the audio file.
+        - get_album_art(file_path: str) -> PIL.Image.Image: Retrieves the album art from the audio file.
+    """
     _logger = logging.getLogger(__name__)
 
     @staticmethod
@@ -84,7 +102,7 @@ class MetadataManager:
         return info, duration, album_art
 
     @staticmethod
-    def get_duration(file_path: str, is_formatted=False) -> str:
+    def get_duration(file_path: str, is_formatted=True) -> str:
         """
         Get the duration of the audio file.
         Args:
