@@ -20,4 +20,4 @@ class LyricsManager:
         - Use OpenAI's Whisper API or OpenAI Whisper Library to transcribe lyrics from audio files.
         - Use a machine learning model to identify the song from the lyrics.
     """
-    raise NotImplementedError("LyricsManager is not implemented yet.")
+    pass
