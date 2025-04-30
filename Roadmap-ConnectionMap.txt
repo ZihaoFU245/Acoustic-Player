@@ -1,0 +1,65 @@
+\+-------------------------------------------------------------------------------+
+|                                    USER                                        |
++------------------------------------/|\-----------------------------------------+
+                                      | (Interactions: Clicks, Input, etc.)
+                                     \|/
++-------------[ FRONTEND (Electron Renderer Process - JS/HTML/CSS) ]-------------+
+|                                                                                |
+|  +---------------------+      +---------------------+      +-----------------+ |
+|  |   UI Components     |<---->|  Frontend State     |<---->|   API Client    | |
+|  | (ui/playerControls.js,|    |  (js/state.js)      |      |   (js/api.js)   | |
+|  |  ui/playlistView.js, |     +---------------------+      +--------/|\------+ |
+|  |  ui/seekBar.js,      |                                            |         |
+|  |  ui/trackInfo.js,    |  +---------------------+                   |         |
+|  |  ui/visualizer.js)   |  | IPC Renderer        |<------------------+         |
+|  +---------/|\---------+   | (js/ipcRenderer.js) | (Via preload.js)  |         |
+|       |     |              +---------/|\---------+                   |         |
+| (Updates DOM) | (Reads State,        |                               |         |
+|       |    |  Triggers Actions)      | (IPC Messages)                |         |
+|       +----+-------------------------+-------------------------------+         |
+|                                     | (HTTP Requests/Responses, WebSocket Msgs)|
++------------------------------------\|/-----------------------------------------+
+                                      |                                |
++------------------------------------/|\--------------------------------+--------+
+|                                     | (IPC Messages)                 |         |
+|  +---------------------+            |                                |         |
+|  | Electron Main Proc. |<-----------+                                |         |
+|  | (main.js)           |                                             |         |
+|  +---------------------+                                             |         |
+|                                                                      |         |
++-------------------[ BACKEND (Python Server - Flask/Django) ]-------------------+
+|                                                                                |
+|  +---------------------+      +---------------------+      +-----------------+ |
+|  | API Endpoints       |<---->| Services (Optional) |----->|      Models     | |
+|  | (ViewModel:         |      | (app/services/      |      | (app/models/    | |
+|  |  app/api/           |      |  audio_service.py)  |      |  player.py,     | |
+|  |  player_endpoints.py|      +---------|-----------+      |  library.py,    | |
+|  |  library_endpoints.py|                | (Uses Audio Lib)|  playlist.py,   | |
+|  |  playlist_endpoints.py|                |                |  metadata.py,   | |
+|  |  serializers.py)    |                |                  | database.py)    | |
+|  +---------/|\---------+                |                  +-------|---------+ |
+|            |                            |                          |           |
+| (Handles HTTP Req)                      +--------------------------+           |
+|            |                                                       |           |
+|  +---------------------+                                           |           |
+|  | WebSocket Handler   |<------------------------------------------+           |
+|  | (app/ws/consumers.py| (Emits updates based on Model/Service changes)        |
+|  |  or events.py)      |                                                       |
+|  +---------/|\---------+                                                       |
+|            | (WebSocket Msgs)                                                  |
+|            +-------------------------------------------------------------------+
+|                                                                                |
+|  +------------------+      +-------------------+                               |
+|  | Audio Library    |<-----| (From Services/   |                               |
+|  | (python-vlc etc.)|      |     Models)       |                               |
+|  +------------------+      +-------------------+                               |
+|                                                                                |
+|  +------------------+      +-------------------+                               |
+|  | Database /       |<-----| (From Models)     |                               |
+|  | Filesystem       |      |                   |                               |
+|  +------------------+      +-------------------+                               |
++--------------------------------------------------------------------------------+
+
+Key:
+<----> : Bidirectional Interaction/Data Flow
+-----> : Unidirectional Interaction/Data Flow

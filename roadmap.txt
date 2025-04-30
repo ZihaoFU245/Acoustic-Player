@@ -1,87 +1,195 @@
-# Roadmap for Acoustic Player (MVVM Structure)
+# Checklist & Structure: Acoustic Player (Web Frontend + Python Backend)
 
-# Functions to be implemented / Progress / guidelines:
-# - main.py: main(), load_config(), setup_logging ( )
-# - models/player.py: MusicPlayer class, playback logic ( )
-# - models/playlist.py: PlaylistManager class, track management ( )
-# - models/metadata.py: MetadataManager class, tag reading/writing, duration, album art (✅)
-# - viewmodels/player_vm.py: PlayerViewModel(QObject), exposes player state, commands, signals ( )
-# - viewmodels/playlist_vm.py: PlaylistViewModel(QObject), exposes playlist state, signals ( )
-# - viewmodels/metadata_vm.py: MetadataViewModel(QObject), exposes metadata, signals ( )
-# - views/main_window.py: MainWindow(QMainWindow), binds to ViewModels ( )
-# - views/widgets/seek_slider.py: SeekSlider(QSlider), track progress ( )
-# - views/widgets/volume.py: VolumeControl(QWidget), volume/mute ( )
-# - views/widgets/visualizer.py: VisualizerWidget(QWidget), audio visualization ( )
-# - views/widgets/lyrics_display.py: LyricsDisplay(QWidget), synced lyrics ( )
-# - utils.py: format_time, scan_music_folder, metadata_to_str, etc. (✅)
-# - hotkeys.py: global hotkey support ( )
-# - lyrics.py: lyrics support ( )
-# - visualizer.py: audio visualizer logic ( )
-# - mini_test.py: MiniTest(QPushButton), toggles text color on click (✅)
+# Progress Legend: ( ) To Do, (✅) Done, (🚧) In Progress
 
-music_player/
-├── main.py
-│   - main(): Application startup, argument parsing, event loop.
-│   - load_config(), setup_logging()
-├── app/
+# --- Backend (Python: Django/Flask) ---
+
+backend/
+├── main.py / manage.py         # Main application entry point (Flask/Django)
+│   └── ( ) Setup basic Flask/Django app structure (routing, config loading)
+├── app/                          # Core application logic
 │   ├── __init__.py
-│   ├── models/
-│   │   ├── player.py
-│   │   │   - class MusicPlayer: Playback logic, state, audio control.
-│   │   ├── playlist.py
-│   │   │   - class PlaylistManager: Track list management.
-│   │   ├── metadata.py
-│   │   │   - class MetadataManager: Read/write tags, duration, album art.
-│   ├── viewmodels/
-│   │   ├── player_vm.py
-│   │   │   - class PlayerViewModel(QObject): Exposes player state, commands, signals.
-│   │   ├── playlist_vm.py
-│   │   │   - class PlaylistViewModel(QObject): Exposes playlist state, signals.
-│   │   ├── metadata_vm.py
-│   │   │   - class MetadataViewModel(QObject): Exposes metadata, signals.
-│   ├── views/
-│   │   ├── main_window.py
-│   │   │   - class MainWindow(QMainWindow): Main UI, binds to ViewModels.
-│   │   ├── widgets/
-│   │   │   ├── seek_slider.py
-│   │   │   │   - class SeekSlider(QSlider): Track progress.
-│   │   │   ├── volume.py
-│   │   │   │   - class VolumeControl(QWidget): Volume/mute.
-│   │   │   ├── visualizer.py
-│   │   │   │   - class VisualizerWidget(QWidget): Audio visualization.
-│   │   │   ├── lyrics_display.py
-│   │   │   │   - class LyricsDisplay(QWidget): Synced lyrics.
-│   ├── utils.py
-│   │   - Utility functions: format_time, scan_music_folder, etc.
-│   ├── hotkeys.py
-│   ├── lyrics.py
-│   ├── visualizer.py
-│   ├── mini_test.py
-│   │   - class MiniTest(QPushButton): Simple button for UI testing, toggles text color on click.
-│   ├── styles/
-│   │   ├── dark_theme.css
-│   │   ├── light_theme.css
-│   │   └── styles.py
-│   ├── resources/
-│   │   ├── icons/
-│   │   ├── images/
-│   │   └── resources.py
-├── assets/
-├── config/
-│   ├── default_config.json
-│   └── user_config.json
-├── tests/
-│   ├── test_player.py
-│   ├── test_playlist.py
-│   └── ...
-├── requirements.txt
-├── README.md
-└── .gitignore
+│   ├── models/                   # Data & Business Logic (Model)
+│   │   ├── __init__.py
+│   │   ├── player.py           # ( ) MusicPlayer class
+│   │   │   ├── ( ) `play(track_path)`
+│   │   │   ├── ( ) `pause()` / `resume()`
+│   │   │   ├── ( ) `stop()`
+│   │   │   ├── ( ) `seek(position_ms)`
+│   │   │   ├── ( ) `set_volume(level)` (0-100)
+│   │   │   ├── ( ) `get_status()` (state, current_track, position, duration, volume)
+│   │   │   └── ( ) Handle playback events (end of track, errors)
+│   │   ├── library.py          # ( ) LibraryManager class
+│   │   │   ├── ( ) `scan_directory(path)` (recursive, find audio files)
+│   │   │   ├── ( ) `add_track_to_db(track_metadata)`
+│   │   │   ├── ( ) `get_tracks(sort_by, filter)`
+│   │   │   ├── ( ) `search_tracks(query)`
+│   │   │   ├── ( ) `get_album_art(track_id)` (extract/find art)
+│   │   │   └── ( ) `get_track_details(track_id)`
+│   │   ├── playlist.py         # ( ) PlaylistManager class
+│   │   │   ├── ( ) `create_playlist(name)`
+│   │   │   ├── ( ) `delete_playlist(playlist_id)`
+│   │   │   ├── ( ) `add_track(playlist_id, track_id)`
+│   │   │   ├── ( ) `remove_track(playlist_id, track_index)`
+│   │   │   ├── ( ) `get_playlist_tracks(playlist_id)`
+│   │   │   └── ( ) `list_playlists()`
+│   │   ├── metadata.py         # ( ) MetadataManager class (using mutagen)
+│   │   │   ├── ( ) `read_tags(file_path)` (title, artist, album, genre, track_num, duration, art)
+│   │   │   └── ( ) `extract_embedded_art(file_path)`
+│   │   └── database.py / models.py # ( ) Database models (SQLAlchemy/Django ORM)
+│   │       ├── ( ) Track model (path, title, artist, album, duration, etc.)
+│   │       ├── ( ) Playlist model (name)
+│   │       └── ( ) PlaylistTrack model (linking table, track order)
+│   ├── api/                      # API Endpoints (ViewModel - Flask Blueprints/DRF ViewSets)
+│   │   ├── __init__.py
+│   │   ├── player_endpoints.py   # ( ) Player control API routes
+│   │   │   ├── ( ) GET `/api/player/status`
+│   │   │   ├── ( ) POST `/api/player/play` { path: '...' }
+│   │   │   ├── ( ) POST `/api/player/pause`
+│   │   │   ├── ( ) POST `/api/player/resume`
+│   │   │   ├── ( ) POST `/api/player/stop`
+│   │   │   ├── ( ) POST `/api/player/seek` { position: ... }
+│   │   │   └── ( ) POST `/api/player/volume` { level: ... }
+│   │   ├── library_endpoints.py  # ( ) Library management API routes
+│   │   │   ├── ( ) GET `/api/library/tracks` (with sorting/filtering params)
+│   │   │   ├── ( ) POST `/api/library/scan` { path: '...' }
+│   │   │   ├── ( ) GET `/api/library/search` { query: '...' }
+│   │   │   └── ( ) GET `/api/library/art/{track_id}`
+│   │   ├── playlist_endpoints.py # ( ) Playlist management API routes
+│   │   │   ├── ( ) GET `/api/playlists`
+│   │   │   ├── ( ) POST `/api/playlists` { name: '...' }
+│   │   │   ├── ( ) DELETE `/api/playlists/{playlist_id}`
+│   │   │   ├── ( ) GET `/api/playlists/{playlist_id}/tracks`
+│   │   │   ├── ( ) POST `/api/playlists/{playlist_id}/tracks` { track_id: ... }
+│   │   │   └── ( ) DELETE `/api/playlists/{playlist_id}/tracks/{track_index}`
+│   │   └── serializers.py        # ( ) Data serialization (Marshmallow/DRF Serializers)
+│   │       ├── ( ) TrackSchema
+│   │       ├── ( ) PlaylistSchema
+│   │       └── ( ) PlayerStatusSchema
+│   ├── services/                 # (Optional) Business logic services
+│   │   └── __init__.py
+│   │   └── audio_service.py      # ( ) Interface with audio lib (python-vlc instance management)
+│   │       ├── ( ) Initialize VLC instance
+│   │       ├── ( ) Create MediaPlayer object
+│   │       └── ( ) Manage player events/callbacks
+│   ├── utils.py                  # ( ) Utility functions (e.g., path handling, time formatting)
+│   └── ws/                       # (Optional) WebSocket handling
+│       └── __init__.py
+│       └── consumers.py / events.py # ( ) WebSocket logic (Flask-SocketIO/Django Channels)
+│           ├── ( ) Emit `player_status_update` on changes
+│           ├── ( ) Emit `library_update` after scan
+│           └── ( ) Emit `playlist_changed` on modification
+├── config/                     # Configuration files
+│   ├── __init__.py
+│   ├── settings.py / config.py # ( ) App settings (database URI, library paths, CORS origins)
+│   └── default_config.json     # ( ) Default settings, user config persistence logic
+├── tests/                      # Unit/Integration tests (pytest)
+│   ├── __init__.py
+│   ├── test_player.py          # ( ) Test player state transitions (play, pause, stop)
+│   ├── test_library.py         # ( ) Test scanning, metadata reading, searching
+│   ├── test_playlist.py        # ( ) Test playlist creation, modification
+│   ├── test_api_player.py      # ( ) Test player API endpoint responses & side effects
+│   ├── test_api_library.py     # ( ) Test library API endpoints
+│   └── test_api_playlist.py    # ( ) Test playlist API endpoints
+├── requirements.txt              # ( ) Python dependencies (Flask/Django, Flask-RESTful/DRF, python-vlc, mutagen, SQLAlchemy, Flask-SocketIO/Channels, pytest, requests)
+└── .gitignore                  # ( ) Git ignore file (add __pycache__, venv, *.db, config files)
 
-Notes:
-- models/: Data and business logic (player, playlist, metadata).
-- viewmodels/: QObject subclasses exposing properties/signals for UI binding.
-- views/: UI components (windows, widgets) that bind to ViewModels.
-- utils.py: Shared helper functions.
-- Optional modules (lyrics, visualizer, hotkeys) can have their own MVVM structure if needed.
-- mini_test.py: Contains MiniTest, a QPushButton subclass for UI testing and demonstration.
+# --- Frontend (HTML/CSS/JS - Using Electron.js) ---
+
+frontend/ (Electron App Structure)
+├── main.js                     # ( ) Electron Main Process: Window creation, system integration, background tasks
+├── preload.js                  # ( ) Electron Preload Script: Securely expose Node.js APIs to Renderer
+├── index.html                    # ( ) Main HTML structure for the Renderer Process window
+├── css/                          # Styling
+│   ├── main.css                  # ( ) Core styles, layout (Flexbox/Grid), variables
+│   ├── theme.css                 # ( ) Theming (dark/light mode toggle, CSS variables)
+│   └── components/               # (Optional) Component-specific styles
+│       ├── _player.css           # ( ) Player controls styling (buttons, sliders)
+│       ├── _playlist.css         # ( ) Playlist/library view styling (list items, scrollbars)
+│       └── _visualizer.css       # ( ) Visualizer canvas styling
+├── js/ (Renderer Process Logic)  # JavaScript Logic (View)
+│   ├── renderer.js / app.js      # ( ) Main script for the renderer process, initialization
+│   ├── api.js                    # ( ) Module for backend API communication (using fetch/axios)
+│   │   ├── ( ) `getPlayerStatus()`
+│   │   ├── ( ) `sendCommand(command, payload)` (e.g., play, pause, seek, volume)
+│   │   ├── ( ) `getLibraryTracks()`
+│   │   ├── ( ) `scanLibrary()`
+│   │   ├── ( ) `searchLibrary(query)`
+│   │   ├── ( ) `getAlbumArtUrl(trackId)`
+│   │   ├── ( ) `getPlaylists()`
+│   │   ├── ( ) `createPlaylist(name)`
+│   │   └── ( ) `addTrackToPlaylist(playlistId, trackId)` ...etc.
+│   ├── state.js                  # ( ) Frontend state management (Simple object, or lib like Pinia/Redux/Zustand)
+│   │   ├── ( ) `currentTrack`, `isPlaying`, `currentTime`, `duration`, `volume`
+│   │   ├── ( ) `trackList`, `currentPlaylistId`, `playlists`
+│   │   └── ( ) Reactive updates triggering UI changes
+│   ├── utils.js                  # ( ) Frontend utility functions (time formatting, DOM helpers)
+│   ├── ipcRenderer.js            # ( ) Module for communicating with Electron Main Process (via preload.js)
+│   ├── ui/                       # UI component modules
+│   │   ├── playerControls.js     # ( ) Play/Pause, Next/Prev, Volume logic
+│   │   │   ├── ( ) Add event listeners to buttons/slider
+│   │   │   ├── ( ) Call `api.js` functions on interaction
+│   │   │   └── ( ) Update button states based on `state.js`
+│   │   ├── seekBar.js            # ( ) Seek bar logic and updates
+│   │   │   ├── ( ) Update slider position based on `state.js` (currentTime/duration)
+│   │   │   └── ( ) Call `api.js` seek function on slider change (drag end/click)
+│   │   ├── trackInfo.js          # ( ) Display current track metadata (title, artist, album art)
+│   │   │   └── ( ) Update display based on `state.js` (`currentTrack`)
+│   │   ├── playlistView.js       # ( ) Display and interact with playlists/library
+│   │   │   ├── ( ) Fetch and render track list/playlists from `api.js`
+│   │   │   ├── ( ) Handle track selection (call `api.js` play)
+│   │   │   └── ( ) Handle playlist management actions (create, add track)
+│   │   ├── visualizer.js         # ( ) Audio visualization logic
+│   │   │   ├── ( ) Use Web Audio API `AnalyserNode` with `<audio>` element or stream
+│   │   │   └── ( ) Draw visualization on `<canvas>` element
+│   │   └── lyricsDisplay.js        # ( ) Lyrics display logic
+│   │       └── ( ) Fetch lyrics from backend API (if implemented)
+│   └── lib/                      # Third-party libraries (if not using CDN/bundler)
+│       └── anime.min.js          # ( ) Animation library (for transitions, visualizer?)
+├── assets/                       # Static assets
+│   ├── icons/                    # ( ) UI Icons (Play, Pause, Next, Prev, Volume, etc. - SVG preferred)
+│   ├── fonts/                    # ( ) Custom fonts (if desired)
+│   └── images/                   # ( ) Placeholder album art, logos etc.
+├── package.json                  # ( ) Frontend dependencies (Electron, electron-builder, maybe Vue/React, axios, state lib)
+└── .gitignore                  # ( ) Git ignore file (add node_modules, dist, .env)
+
+# --- Overall Tasks ---
+
+# - Backend Setup:
+#   - ( ) Choose & Setup Backend Framework (Flask recommended for simplicity, Django for batteries-included)
+#   - ( ) Setup API Framework (Flask-RESTful/Flask Blueprints or DRF)
+#   - ( ) Configure CORS (Cross-Origin Resource Sharing)
+#   - ( ) Choose & Integrate Audio Library (python-vlc seems suitable)
+#   - ( ) Implement basic player model (`player.py`) & API endpoints (`player_endpoints.py`)
+#       - ( ) Start with play/pause/stop/status
+#   - ( ) Implement basic library scanning (`library.py`, `metadata.py`) & API endpoints (`library_endpoints.py`)
+#       - ( ) Start with scanning a single folder and listing tracks
+#   - ( ) Setup Database (SQLite for simplicity initially) & ORM (`database.py`)
+# - Frontend Setup:
+#   - ( ) Setup Electron project structure (main.js, preload.js, renderer process files)
+#   - ( ) Configure Electron build process (electron-builder)
+#   - ( ) Setup basic HTML structure (`index.html`)
+#   - ( ) Setup basic CSS for layout (`main.css`)
+#   - ( ) Implement API client module (`api.js`) to fetch backend data
+#   - ( ) Implement basic player controls UI (`playerControls.js`, `seekBar.js`) & connect to API status/commands
+#   - ( ) Implement basic track list display (`playlistView.js`) & connect to library API
+#   - ( ) Setup IPC communication between Main and Renderer processes if needed (e.g., for native dialogs, global shortcuts)
+# - Feature Implementation:
+#   - ( ) Seeking functionality (Frontend slider -> API -> Backend player)
+#   - ( ) Volume control (Frontend slider -> API -> Backend player)
+#   - ( ) Playlist management (CRUD operations via UI -> API -> Backend playlist model)
+#   - ( ) Metadata display (Fetch track details -> Update UI `trackInfo.js`)
+#   - ( ) Album Artwork display (Backend endpoint -> Frontend `<img>` tag)
+#   - ( ) UI Styling & Theming (Refine CSS, implement dark/light mode)
+#   - ( ) Animations & Transitions (Use anime.js / CSS transitions for smoother UI)
+#   - ( ) Audio Visualization (`visualizer.js` using Web Audio API)
+#   - ( ) Lyrics display (Requires backend support for fetching/storing lyrics)
+#   - ( ) Real-time updates (Implement WebSockets for player status, etc. - `ws/`, `socket.io-client`)
+#   - ( ) Configuration/Settings persistence (Save/load library paths, theme from `config/default_config.json` or backend DB)
+# - Polish & Deployment:
+#   - ( ) Testing (Unit tests for backend, API tests, E2E tests for Electron app with Spectron/Playwright)
+#   - ( ) Error Handling (Graceful error handling on frontend, backend, and Electron processes)
+#   - ( ) Build/Packaging process (Use electron-builder to create installers/executables)
+#   - ( ) Documentation (README with setup, usage, and build instructions)
+#   - ( ) Consider code signing for distribution
+
