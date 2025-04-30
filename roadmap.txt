@@ -11,13 +11,13 @@ backend/
 │   ├── __init__.py
 │   ├── models/                   # Data & Business Logic (Model)
 │   │   ├── __init__.py
-│   │   ├── player.py           # ( ) MusicPlayer class
-│   │   │   ├── ( ) `play(track_path)`
+│   │   ├── player.py           # ( ) MusicPlayer class (using sounddevice/soundfile)
+│   │   │   ├── ( ) `play(track_path)` (Load with soundfile, play with sounddevice)
 │   │   │   ├── ( ) `pause()` / `resume()`
 │   │   │   ├── ( ) `stop()`
 │   │   │   ├── ( ) `seek(position_ms)`
 │   │   │   ├── ( ) `set_volume(level)` (0-100)
-│   │   │   ├── ( ) `get_status()` (state, current_track, position, duration, volume)
+│   │   │   ├── ( ) `get_status()` (state, current_track, position, duration, volume - from sounddevice stream)
 │   │   │   └── ( ) Handle playback events (end of track, errors)
 │   │   ├── library.py          # ( ) LibraryManager class
 │   │   │   ├── ( ) `scan_directory(path)` (recursive, find audio files)
@@ -34,7 +34,7 @@ backend/
 │   │   │   ├── ( ) `get_playlist_tracks(playlist_id)`
 │   │   │   └── ( ) `list_playlists()`
 │   │   ├── metadata.py         # ( ) MetadataManager class (using mutagen)
-│   │   │   ├── ( ) `read_tags(file_path)` (title, artist, album, genre, track_num, duration, art)
+│   │   │   ├── ( ) `read_tags(file_path)` (title, artist, album, genre, track_num, duration, volume, **embedded lyrics**)
 │   │   │   └── ( ) `extract_embedded_art(file_path)`
 │   │   └── database.py / models.py # ( ) Database models (SQLAlchemy/Django ORM)
 │   │       ├── ( ) Track model (path, title, artist, album, duration, etc.)
@@ -62,17 +62,23 @@ backend/
 │   │   │   ├── ( ) GET `/api/playlists/{playlist_id}/tracks`
 │   │   │   ├── ( ) POST `/api/playlists/{playlist_id}/tracks` { track_id: ... }
 │   │   │   └── ( ) DELETE `/api/playlists/{playlist_id}/tracks/{track_index}`
+│   │   ├── lyrics_endpoints.py   # ( ) Lyrics API routes
+│   │   │   └── ( ) GET `/api/lyrics/{track_id}`
 │   │   └── serializers.py        # ( ) Data serialization (Marshmallow/DRF Serializers)
 │   │       ├── ( ) TrackSchema
 │   │       ├── ( ) PlaylistSchema
 │   │       └── ( ) PlayerStatusSchema
 │   ├── services/                 # (Optional) Business logic services
 │   │   └── __init__.py
-│   │   └── audio_service.py      # ( ) Interface with audio lib (python-vlc instance management)
-│   │       ├── ( ) Initialize VLC instance
-│   │       ├── ( ) Create MediaPlayer object
-│   │       └── ( ) Manage player events/callbacks
+│   │   └── audio_service.py      # ( ) Interface with audio libs (sounddevice/soundfile)
+│   │       ├── ( ) Manage sounddevice stream (creation, callbacks)
+│   │       ├── ( ) Load audio data using soundfile
+│   │       └── ( ) Handle playback state and events
 │   ├── utils.py                  # ( ) Utility functions (e.g., path handling, time formatting)
+│   ├── lyrics.py                 # ( ) Lyrics handling (reading .lrc files, fetching from APIs - Optional)
+│   │   ├── ( ) `find_lrc_file(audio_path)`
+│   │   ├── ( ) `parse_lrc(lrc_content)`
+│   │   └── ( ) `get_lyrics_for_track(track_id)` (combines embedded, .lrc, external)
 │   └── ws/                       # (Optional) WebSocket handling
 │       └── __init__.py
 │       └── consumers.py / events.py # ( ) WebSocket logic (Flask-SocketIO/Django Channels)
@@ -91,7 +97,7 @@ backend/
 │   ├── test_api_player.py      # ( ) Test player API endpoint responses & side effects
 │   ├── test_api_library.py     # ( ) Test library API endpoints
 │   └── test_api_playlist.py    # ( ) Test playlist API endpoints
-├── requirements.txt              # ( ) Python dependencies (Flask/Django, Flask-RESTful/DRF, python-vlc, mutagen, SQLAlchemy, Flask-SocketIO/Channels, pytest, requests)
+├── requirements.txt              # ( ) Python dependencies (Flask/Django, Flask-RESTful/DRF, soundfile, sounddevice, mutagen, SQLAlchemy, Flask-SocketIO/Channels, pytest, requests)
 └── .gitignore                  # ( ) Git ignore file (add __pycache__, venv, *.db, config files)
 
 # --- Frontend (HTML/CSS/JS - Using Electron.js) ---
@@ -118,7 +124,8 @@ frontend/ (Electron App Structure)
 │   │   ├── ( ) `getAlbumArtUrl(trackId)`
 │   │   ├── ( ) `getPlaylists()`
 │   │   ├── ( ) `createPlaylist(name)`
-│   │   └── ( ) `addTrackToPlaylist(playlistId, trackId)` ...etc.
+│   │   ├── ( ) `addTrackToPlaylist(playlistId, trackId)` ...etc.
+│   │   └── ( ) `getLyrics(trackId)`
 │   ├── state.js                  # ( ) Frontend state management (Simple object, or lib like Pinia/Redux/Zustand)
 │   │   ├── ( ) `currentTrack`, `isPlaying`, `currentTime`, `duration`, `volume`
 │   │   ├── ( ) `trackList`, `currentPlaylistId`, `playlists`
@@ -143,7 +150,8 @@ frontend/ (Electron App Structure)
 │   │   │   ├── ( ) Use Web Audio API `AnalyserNode` with `<audio>` element or stream
 │   │   │   └── ( ) Draw visualization on `<canvas>` element
 │   │   └── lyricsDisplay.js        # ( ) Lyrics display logic
-│   │       └── ( ) Fetch lyrics from backend API (if implemented)
+│   │       ├── ( ) Fetch lyrics from backend API using `api.js`
+│   │       └── ( ) Display lyrics, potentially sync with timecodes if available (.lrc)
 │   └── lib/                      # Third-party libraries (if not using CDN/bundler)
 │       └── anime.min.js          # ( ) Animation library (for transitions, visualizer?)
 ├── assets/                       # Static assets
@@ -159,7 +167,7 @@ frontend/ (Electron App Structure)
 #   - ( ) Choose & Setup Backend Framework (Flask recommended for simplicity, Django for batteries-included)
 #   - ( ) Setup API Framework (Flask-RESTful/Flask Blueprints or DRF)
 #   - ( ) Configure CORS (Cross-Origin Resource Sharing)
-#   - ( ) Choose & Integrate Audio Library (python-vlc seems suitable)
+#   - ( ) Choose & Integrate Audio Library (soundfile + sounddevice)
 #   - ( ) Implement basic player model (`player.py`) & API endpoints (`player_endpoints.py`)
 #       - ( ) Start with play/pause/stop/status
 #   - ( ) Implement basic library scanning (`library.py`, `metadata.py`) & API endpoints (`library_endpoints.py`)
@@ -183,7 +191,11 @@ frontend/ (Electron App Structure)
 #   - ( ) UI Styling & Theming (Refine CSS, implement dark/light mode)
 #   - ( ) Animations & Transitions (Use anime.js / CSS transitions for smoother UI)
 #   - ( ) Audio Visualization (`visualizer.js` using Web Audio API)
-#   - ( ) Lyrics display (Requires backend support for fetching/storing lyrics)
+#   - ( ) Lyrics display
+#       - ( ) Backend: Implement reading embedded/LRC lyrics (`metadata.py`, `lyrics.py`)
+#       - ( ) Backend: Implement lyrics API endpoint (`lyrics_endpoints.py`)
+#       - ( ) Frontend: Implement API call (`api.js`)
+#       - ( ) Frontend: Implement display and optional synchronization (`lyricsDisplay.js`)
 #   - ( ) Real-time updates (Implement WebSockets for player status, etc. - `ws/`, `socket.io-client`)
 #   - ( ) Configuration/Settings persistence (Save/load library paths, theme from `config/default_config.json` or backend DB)
 # - Polish & Deployment:

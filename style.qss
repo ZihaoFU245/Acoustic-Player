@@ -1,6 +1,6 @@
 /* General Window Style */
 QWidget {
-    background-color: #FFFFFF; /* White background */
+    background-color: #ffffff; /* White background */
     color: #1A1A1A; /* Off-black text */
     font-family: "Rockwell"; /* Specify your font */
     font-size: 14px;

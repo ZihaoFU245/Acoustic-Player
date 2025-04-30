@@ -1,5 +1,0 @@
-
-
-
-class HotkeyManager:
-    pass
