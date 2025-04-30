@@ -11,13 +11,13 @@ backend/
 │   ├── __init__.py
 │   ├── models/                   # Data & Business Logic (Model)
 │   │   ├── __init__.py
-│   │   ├── player.py           # ( ) MusicPlayer class (using sounddevice/soundfile)
-│   │   │   ├── ( ) `play(track_path)` (Load with soundfile, play with sounddevice)
+│   │   ├── player.py           # ( ) MusicPlayer class (using python-vlc)
+│   │   │   ├── ( ) `play(track_path)` (Create VLC instance, media, player)
 │   │   │   ├── ( ) `pause()` / `resume()`
 │   │   │   ├── ( ) `stop()`
 │   │   │   ├── ( ) `seek(position_ms)`
 │   │   │   ├── ( ) `set_volume(level)` (0-100)
-│   │   │   ├── ( ) `get_status()` (state, current_track, position, duration, volume - from sounddevice stream)
+│   │   │   ├── ( ) `get_status()` (state, current_track, position, duration, volume - from VLC player)
 │   │   │   └── ( ) Handle playback events (end of track, errors)
 │   │   ├── library.py          # ( ) LibraryManager class
 │   │   │   ├── ( ) `scan_directory(path)` (recursive, find audio files)
@@ -70,10 +70,9 @@ backend/
 │   │       └── ( ) PlayerStatusSchema
 │   ├── services/                 # (Optional) Business logic services
 │   │   └── __init__.py
-│   │   └── audio_service.py      # ( ) Interface with audio libs (sounddevice/soundfile)
-│   │       ├── ( ) Manage sounddevice stream (creation, callbacks)
-│   │       ├── ( ) Load audio data using soundfile
-│   │       └── ( ) Handle playback state and events
+│   │   └── audio_service.py      # (Optional) Interface with audio libs (python-vlc)
+│   │       ├── ( ) Manage VLC instance/player lifecycle
+│   │       └── ( ) Handle playback state and events from VLC
 │   ├── utils.py                  # ( ) Utility functions (e.g., path handling, time formatting)
 │   ├── lyrics.py                 # ( ) Lyrics handling (reading .lrc files, fetching from APIs - Optional)
 │   │   ├── ( ) `find_lrc_file(audio_path)`
@@ -97,7 +96,7 @@ backend/
 │   ├── test_api_player.py      # ( ) Test player API endpoint responses & side effects
 │   ├── test_api_library.py     # ( ) Test library API endpoints
 │   └── test_api_playlist.py    # ( ) Test playlist API endpoints
-├── requirements.txt              # ( ) Python dependencies (Flask/Django, Flask-RESTful/DRF, soundfile, sounddevice, mutagen, SQLAlchemy, Flask-SocketIO/Channels, pytest, requests)
+├── requirements.txt              # ( ) Python dependencies (Flask/Django, Flask-RESTful/DRF, python-vlc, mutagen, SQLAlchemy, Flask-SocketIO/Channels, pytest, requests)
 └── .gitignore                  # ( ) Git ignore file (add __pycache__, venv, *.db, config files)
 
 # --- Frontend (HTML/CSS/JS - Using Electron.js) ---
@@ -167,7 +166,7 @@ frontend/ (Electron App Structure)
 #   - ( ) Choose & Setup Backend Framework (Flask recommended for simplicity, Django for batteries-included)
 #   - ( ) Setup API Framework (Flask-RESTful/Flask Blueprints or DRF)
 #   - ( ) Configure CORS (Cross-Origin Resource Sharing)
-#   - ( ) Choose & Integrate Audio Library (soundfile + sounddevice)
+#   - ( ) Choose & Integrate Audio Library (python-vlc)
 #   - ( ) Implement basic player model (`player.py`) & API endpoints (`player_endpoints.py`)
 #       - ( ) Start with play/pause/stop/status
 #   - ( ) Implement basic library scanning (`library.py`, `metadata.py`) & API endpoints (`library_endpoints.py`)
