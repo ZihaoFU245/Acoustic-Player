@@ -1,23 +1,52 @@
+"""
+Utility functions for the music player app.
+"""
 import time
 import os
 import json
+from typing import Dict, List, Union, Optional
 
 def format_time(seconds: float) -> str:
-    """Format seconds into a string of the form mm:ss."""
+    """
+    Format seconds into a string of the form mm:ss.
+    
+    Args:
+        seconds: Time in seconds
+        
+    Returns:
+        Formatted time string
+    """
     minutes = int(seconds // 60)
     seconds = int(seconds % 60)
     return f"{minutes:02}:{seconds:02}"
 
-def get_supported_formats() -> list[str]:
-    """Get a list of supported formats."""
+def format_time_ms(milliseconds: float) -> str:
+    """
+    Format milliseconds into a string of the form mm:ss.
+    
+    Args:
+        milliseconds: Time in milliseconds
+        
+    Returns:
+        Formatted time string
+    """
+    return format_time(milliseconds / 1000)
+
+def get_supported_formats() -> List[str]:
+    """
+    Get a list of supported audio formats.
+    
+    Returns:
+        List of supported file extensions
+    """
     return [
         "mp3",
         "wav",
-        "ogg",
+        "ogg", 
         "flac",
         "aac",
         "m4a",
-        # remove wma for now, as it is not supported by mutagen
+        # Remove wma for now, as it is not supported by mutagen
         "opus",
     ]
 
