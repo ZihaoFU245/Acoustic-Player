@@ -7,6 +7,7 @@ from flask_cors import CORS
 import os
 from app.api import player_api, library_api, playlist_api, lyrics_api
 from app.ws import socketio
+from app.models.database import init_db, close_db_session
 
 def create_app():
     """Create and configure the Flask application."""
@@ -18,11 +19,19 @@ def create_app():
     # Enable CORS for all routes
     CORS(app, resources={r"/api/*": {"origins": "*"}})  # NOTE: potential risk for *
     
+    # Initialize database
+    init_db()
+    
     # Register API blueprints
     app.register_blueprint(player_api, url_prefix='/api/player')
     app.register_blueprint(library_api, url_prefix='/api/library')
     app.register_blueprint(playlist_api, url_prefix='/api/playlists')
     app.register_blueprint(lyrics_api, url_prefix='/api/lyrics')
+    
+    # Register teardown function to close database session
+    @app.teardown_appcontext
+    def shutdown_session(exception=None):
+        close_db_session()
     
     # Error handlers
     @app.errorhandler(404)

@@ -37,7 +37,7 @@ def track_schema(track):
         
     track_id = track.get('id') if isinstance(track, dict) else getattr(track, 'id', None)
     
-    return {
+    result = {
         'id': track_id,
         'path': track.get('path') if isinstance(track, dict) else getattr(track, 'path', ''),
         'title': track.get('title') if isinstance(track, dict) else getattr(track, 'title', ''),
@@ -45,8 +45,16 @@ def track_schema(track):
         'album': track.get('album') if isinstance(track, dict) else getattr(track, 'album', ''),
         'duration': track.get('duration') if isinstance(track, dict) else getattr(track, 'duration', 0),
         'track_num': track.get('track_num') if isinstance(track, dict) else getattr(track, 'track_num', 0),
-        'genre': track.get('genre') if isinstance(track, dict) else getattr(track, 'genre', '')
+        'genre': track.get('genre') if isinstance(track, dict) else getattr(track, 'genre', ''),
+        'album_art_path': track.get('album_art_path') if isinstance(track, dict) else getattr(track, 'album_art_path', None),
+        'has_thumbnail': track.get('has_thumbnail') if isinstance(track, dict) else getattr(track, 'has_thumbnail', False)
     }
+    
+    # Include thumbnail data if this is a Track object with the get_thumbnail_base64 method
+    if not isinstance(track, dict) and hasattr(track, 'get_thumbnail_base64'):
+        result['thumbnail'] = track.get_thumbnail_base64()
+        
+    return result
 
 def playlist_schema(playlist):
     """

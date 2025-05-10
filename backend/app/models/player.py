@@ -52,8 +52,11 @@ class MusicPlayer:
             self.player.set_time(int(position_ms))
 
     def set_volume(self, level: int):
-        if 0 <= level <= 100:
-            self.player.audio_set_volume(level)
+        if not isinstance(level, (int, float)):
+            raise ValueError(f"Data type {type(level)} not supported.")
+        level = int(level)
+        level = max(0, min(100, level))
+        self.player.audio_set_volume(level)
 
     @property
     def duration(self):
@@ -79,7 +82,13 @@ class MusicPlayer:
             "duration": self.duration,
             "volume": self.player.audio_get_volume(),
         }
-
+    
+    """
+    TODO: Add callback support to handle tracks and error, when playlist implemented
+    TODO: Connect to websocket
+    TODO: Automatic next track
+    TODO: Better error handling
+    """
     def _on_end(self, event):
         print("Track finished.")
 

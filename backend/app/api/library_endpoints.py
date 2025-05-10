@@ -74,3 +74,24 @@ def get_album_art(track_id):
         return send_file(art_path, mimetype='image/jpeg')
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@library_api.route('/tracks/<int:track_id>/thumbnail', methods=['GET'])
+def get_track_thumbnail(track_id):
+    """
+    Get the album art thumbnail for a track.
+    
+    Returns the thumbnail as a base64-encoded data URL.
+    If the track has no thumbnail, returns a 404 error.
+    """
+    try:
+        track = library_manager.get_track_by_id(track_id)
+        if not track:
+            return jsonify({'error': 'Track not found'}), 404
+        
+        thumbnail = track.get_thumbnail_base64()
+        if not thumbnail:
+            return jsonify({'error': 'No thumbnail available for this track'}), 404
+        
+        return jsonify({'thumbnail': thumbnail})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

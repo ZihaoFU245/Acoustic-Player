@@ -270,7 +270,30 @@ export const libraryApi = {
    */
   getAlbumArtUrl(trackId) {
     return `${API_BASE_URL}/library/art/${trackId}`;
-  }
+  },
+
+  /**
+   * Get album art thumbnail for a track
+   * @param {number} trackId - ID of the track
+   * @returns {Promise} Promise resolving to thumbnail data as base64 string
+   */
+  async getThumbnail(trackId) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/library/tracks/${trackId}/thumbnail`);
+      if (!response.ok) {
+        if (response.status === 404) {
+          // No thumbnail available, just return null
+          return null;
+        }
+        throw new Error('Failed to get track thumbnail');
+      }
+      const data = await response.json();
+      return data.thumbnail;
+    } catch (error) {
+      console.error('Error getting track thumbnail:', error);
+      throw error;
+    }
+  },
 };
 
 /**

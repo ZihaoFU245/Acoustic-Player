@@ -26,8 +26,26 @@ class MetadataManager:
         - get_metadata(file_path: str) -> tuple: Extracts metadata, duration, and album art from the audio file.
         - get_duration(file_path: str, is_formatted=True) -> str: Returns the duration of the audio file.
         - get_album_art(file_path: str) -> PIL.Image.Image: Retrieves the album art from the audio file.
+        - generate_thumbnail(image, max_size=150) -> bytes: Generates a thumbnail of the album art.
     """
     _logger = logging.getLogger(__name__)
+    
+    def __init__(self, album_art_dir=None):
+        """
+        Initialize the metadata manager.
+        
+        Args:
+            album_art_dir: Directory to save extracted album art (default: None)
+        """
+        # If no album art directory is specified, use a default in the application data directory
+        if album_art_dir is None:
+            user_data_dir = os.path.expanduser("~/.acoustic_player")
+            self.album_art_dir = os.path.join(user_data_dir, "album_art")
+        else:
+            self.album_art_dir = album_art_dir
+        
+        # Create the album art directory if it doesn't exist
+        os.makedirs(self.album_art_dir, exist_ok=True)
 
     @staticmethod
     def get_metadata(file_path: str) -> tuple:
@@ -152,3 +170,138 @@ class MetadataManager:
                 except Exception as e:
                     MetadataManager._logger.warning(f"Error extracting album art from APIC tag as image: {e}")
         return None
+
+    def extract_embedded_art(self, file_path: str) -> tuple:
+        """
+        Extract album art from audio file, save it to disk, and generate a thumbnail.
+        
+        Args:
+            file_path: Path to the audio file
+            
+        Returns:
+            Tuple of (path_to_saved_album_art, thumbnail_bytes_data) or (None, None) if not found
+        """
+        try:
+            # Get the album art as a PIL Image
+            image = self.get_album_art(file_path)
+            
+            if not image:
+                return None, None
+                
+            # Create a filename based on the audio file path
+            base_name = os.path.splitext(os.path.basename(file_path))[0]
+            art_filename = f"{base_name}_cover.jpg"
+            art_path = os.path.join(self.album_art_dir, art_filename)
+            
+            # Save the full-size image as JPEG
+            image.save(art_path, "JPEG")
+            
+            # Generate thumbnail
+            thumbnail_data = self.generate_thumbnail(image)
+            
+            return art_path, thumbnail_data
+        except Exception as e:
+            self._logger.error(f"Error extracting album art: {str(e)}")
+            return None, None
+
+    def read_tags(self, file_path: str) -> dict:
+        """
+        Read tags from an audio file and return them as a dictionary.
+        
+        Args:
+            file_path: Path to the audio file
+            
+        Returns:
+            Dictionary containing audio metadata
+        """
+        try:
+            metadata, duration, _ = self.get_metadata(file_path)
+            
+            # Add duration to metadata
+            metadata['duration'] = duration
+            
+            # Standardize common fields
+            result = {
+                'path': file_path,
+                'title': metadata.get('title', os.path.basename(file_path)),
+                'artist': metadata.get('artist', ''),
+                'album': metadata.get('album', ''),
+                'duration': duration,
+                'track_num': int(metadata.get('tracknumber', '0').split('/')[0]) if metadata.get('tracknumber') else 0,
+                'genre': metadata.get('genre', ''),
+                'year': int(metadata.get('date', '0')[:4]) if metadata.get('date') else None,
+                'lyrics': metadata.get('lyrics', '')
+            }
+            
+            return result
+        except Exception as e:
+            self._logger.error(f"Error reading tags from {file_path}: {str(e)}")
+            # Return basic metadata with file path and estimated duration
+            return {
+                'path': file_path,
+                'title': os.path.basename(file_path),
+                'artist': 'Unknown Artist',
+                'album': 'Unknown Album',
+                'duration': 0,
+                'track_num': 0,
+                'genre': '',
+                'year': None,
+                'lyrics': ''
+            }
+
+    @staticmethod
+    def generate_thumbnail(image, max_size=150) -> bytes:
+        """
+        Generate a thumbnail of the album art.
+        
+        Args:
+            image (PIL.Image.Image): The original album art image.
+            max_size (int): The maximum size of the thumbnail's width or height (default: 150).
+            
+        Returns:
+            bytes: The thumbnail image data in bytes.
+        """
+        image.thumbnail((max_size, max_size))
+        with io.BytesIO() as output:
+            image.save(output, format="JPEG")
+            return output.getvalue()
+
+    @staticmethod
+    def generate_thumbnail(image, max_size=150):
+        """
+        Generate a thumbnail of the album art with the specified maximum dimension.
+        
+        Args:
+            image: PIL.Image.Image object
+            max_size: Maximum size of the thumbnail in pixels (for the largest dimension)
+            
+        Returns:
+            bytes: The thumbnail image data in JPEG format
+        """
+        if not image:
+            return None
+            
+        # Create a copy to avoid modifying the original
+        thumbnail = image.copy()
+        
+        # Calculate new dimensions while maintaining aspect ratio
+        width, height = thumbnail.size
+        if width > height:
+            new_width = max_size
+            new_height = int(height * (max_size / width))
+        else:
+            new_height = max_size
+            new_width = int(width * (max_size / height))
+            
+        # Resize image
+        thumbnail = thumbnail.resize((new_width, new_height), Image.LANCZOS)
+        
+        # Convert to RGB if needed (for formats like PNG with transparency)
+        if thumbnail.mode != 'RGB':
+            thumbnail = thumbnail.convert('RGB')
+            
+        # Save to bytes buffer
+        buffer = io.BytesIO()
+        thumbnail.save(buffer, format="JPEG", quality=85)
+        
+        return buffer.getvalue()

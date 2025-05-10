@@ -114,6 +114,32 @@ def test_library_endpoints():
             print("First matching track:")
             print(json.dumps(tracks[0], indent=2))
 
+    # Get track thumbnail
+    print("\nGetting track thumbnail...")
+    # Get the first track ID
+    track_id = None
+    response = requests.get(f"{BASE_URL}/library/tracks")
+    if response.status_code == 200:
+        tracks = response.json()
+        if tracks:
+            track_id = tracks[0].get('id')
+    
+    if track_id:
+        print(f"Testing thumbnail for track ID: {track_id}")
+        response = requests.get(f"{BASE_URL}/library/tracks/{track_id}/thumbnail")
+        print(f"Status: {response.status_code}")
+        if response.status_code == 200:
+            data = response.json()
+            if 'thumbnail' in data:
+                thumbnail_preview = data['thumbnail'][:50] + '...' if data['thumbnail'] else None
+                print(f"Thumbnail received: {thumbnail_preview}")
+            else:
+                print("No thumbnail data in response")
+        elif response.status_code == 404:
+            print("No thumbnail available for this track")
+    else:
+        print("No tracks available to test thumbnail")
+
 def test_playlist_endpoints():
     """Test playlist API endpoints."""
     print("\n=== Testing Playlist Endpoints ===")

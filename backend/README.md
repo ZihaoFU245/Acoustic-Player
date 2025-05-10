@@ -67,7 +67,7 @@ This will start the Flask server on the configured host and port (default: http:
 - `GET /api/library/tracks` - List all tracks in the library
 - `POST /api/library/scan` - Scan a directory for audio files
 - `GET /api/library/search` - Search for tracks
-- `GET /api/library/art/{track_id}` - Get album art for a track
+- `GET /api/library/tracks/{track_id}/thumbnail` - Get album art thumbnail as base64 data
 
 ### Playlist Management
 
@@ -89,6 +89,16 @@ The application uses Socket.IO for real-time updates. The following events are e
 - `player_status_update` - Emitted when player status changes
 - `library_update` - Emitted when library is updated
 - `playlist_changed` - Emitted when a playlist is created, updated, or deleted
+
+## Album Art Storage
+
+The backend implements a hybrid approach for album art storage:
+
+- Full-size album art is stored on the filesystem (in `~/.acoustic_player/album_art` by default)
+- Thumbnail versions (150px) are stored directly in the database for efficient loading
+
+This provides both performance benefits (fast loading of thumbnails) and optimal resource usage 
+(large files kept out of database). See `docs/Album-Art-Strategy.md` for more details.
 
 ## Testing
 
