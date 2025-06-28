@@ -23,6 +23,11 @@ class MusicPlayer:
         self.player.set_media(self.media)
         self.current_track = file_path
 
+    def play(self, file_path: str):
+        """Convenience method to load a track and start playback."""
+        self.load_music(file_path)
+        self.start()
+
     def start(self):
         self.player.play()
 
