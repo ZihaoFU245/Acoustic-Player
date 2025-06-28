@@ -1,4 +1,3 @@
-
 """
 Playlist model for managing playlists in the application.
 

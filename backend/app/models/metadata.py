@@ -1,12 +1,3 @@
-import os
-import logging
-import io
-from PIL import Image
-from mutagen import File
-import base64
-import mutagen.flac
-from .. import utils
-
 """
 Module for managing metadata of audio files.
 
@@ -15,6 +6,15 @@ Use in the Acoustic Player Application:
 - Extract album art and duration from audio files.
 - Save them in a JSON file as Cache.
 """
+# NOTE: Reviewed
+import os
+import logging
+import io
+from PIL import Image
+from mutagen import File
+import base64
+import mutagen.flac
+from .. import utils
 
 class MetadataManager:
     """
@@ -182,23 +182,19 @@ class MetadataManager:
             Tuple of (path_to_saved_album_art, thumbnail_bytes_data) or (None, None) if not found
         """
         try:
-            # Get the album art as a PIL Image
             image = self.get_album_art(file_path)
-            
             if not image:
                 return None, None
-                
-            # Create a filename based on the audio file path
             base_name = os.path.splitext(os.path.basename(file_path))[0]
             art_filename = f"{base_name}_cover.jpg"
             art_path = os.path.join(self.album_art_dir, art_filename)
-            
-            # Save the full-size image as JPEG
+            # Save the full-size image as JPEG (convert to RGB if needed)
+            if image.mode != 'RGB':
+                image = image.convert('RGB')
+
             image.save(art_path, "JPEG")
-            
-            # Generate thumbnail
+
             thumbnail_data = self.generate_thumbnail(image)
-            
             return art_path, thumbnail_data
         except Exception as e:
             self._logger.error(f"Error extracting album art: {str(e)}")
@@ -248,23 +244,6 @@ class MetadataManager:
                 'year': None,
                 'lyrics': ''
             }
-
-    @staticmethod
-    def generate_thumbnail(image, max_size=150) -> bytes:
-        """
-        Generate a thumbnail of the album art.
-        
-        Args:
-            image (PIL.Image.Image): The original album art image.
-            max_size (int): The maximum size of the thumbnail's width or height (default: 150).
-            
-        Returns:
-            bytes: The thumbnail image data in bytes.
-        """
-        image.thumbnail((max_size, max_size))
-        with io.BytesIO() as output:
-            image.save(output, format="JPEG")
-            return output.getvalue()
 
     @staticmethod
     def generate_thumbnail(image, max_size=150):

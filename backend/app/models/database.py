@@ -2,6 +2,7 @@
 Database models and configuration for the Acoustic Player application.
 This module sets up SQLAlchemy ORM models for tracks, playlists, and playlist tracks.
 """
+# NOTE: This file is reviewed
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, Table, create_engine, event, LargeBinary
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker, scoped_session
@@ -32,12 +33,12 @@ class Track(Base):
     title = Column(String(255), nullable=True)
     artist = Column(String(255), nullable=True)
     album = Column(String(255), nullable=True)
-    duration = Column(Float, nullable=True)  # Duration in seconds
+    duration = Column(Float, nullable=True)
     track_num = Column(Integer, nullable=True)
     genre = Column(String(255), nullable=True)
     year = Column(Integer, nullable=True)
-    album_art_path = Column(String(255), nullable=True)  # Path to full-size album art file
-    album_art_thumbnail = Column(LargeBinary, nullable=True)  # Small thumbnail stored directly in DB
+    album_art_path = Column(String(255), nullable=True)
+    album_art_thumbnail = Column(LargeBinary, nullable=True)
     
     # Relationship: a track can be in multiple playlists
     playlists = relationship(
