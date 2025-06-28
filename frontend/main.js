@@ -4,6 +4,10 @@ const { libraryApi, playerApi } = initApi();
 
 document.addEventListener('DOMContentLoaded', () => {
     loadLibrary();
+    const scanBtn = document.getElementById('scan-btn');
+    if (scanBtn) {
+        scanBtn.addEventListener('click', scanLibrary);
+    }
 });
 
 async function loadLibrary() {
@@ -20,5 +24,24 @@ async function loadLibrary() {
         });
     } catch (err) {
         console.error('Failed to load tracks', err);
+    }
+}
+
+async function scanLibrary() {
+    const input = document.getElementById('scan-path');
+    const path = input.value.trim();
+    if (!path) return;
+
+    try {
+        await libraryApi.scanDirectory(path);
+        if (window.M && M.toast) {
+            M.toast({ html: 'Scan completed' });
+        }
+        loadLibrary();
+    } catch (err) {
+        console.error('Failed to scan folder', err);
+        if (window.M && M.toast) {
+            M.toast({ html: 'Scan failed' });
+        }
     }
 }
