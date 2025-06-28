@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acoustic Player</title>
+    <!-- Materialize CSS via CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+<body class="grey lighten-4">
+    <nav class="blue-grey darken-3">
+        <div class="nav-wrapper container">
+            <a href="#" class="brand-logo">Acoustic Player</a>
+        </div>
+    </nav>
+
+    <div class="container" id="content">
+        <div class="section" id="library-section">
+            <h5>Library</h5>
+            <ul id="track-list" class="collection"></ul>
+        </div>
+    </div>
+
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script type="module" src="js/api.js"></script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>

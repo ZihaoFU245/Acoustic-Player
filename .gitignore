@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+
+# Node/Electron
+node_modules/
+/dist/
+
+# Environment
+venv/
+.env
