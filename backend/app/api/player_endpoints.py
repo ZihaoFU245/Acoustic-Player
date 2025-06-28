@@ -4,20 +4,20 @@ This module defines the API routes for player controls.
 """
 # NOTE: This code is reviewed
 from flask import Blueprint, request, jsonify
-from ..models.player import MusicPlayer
+from ..services.audio_service import AudioService
 from .serializers import player_status_schema
 from ..ws.events import emit_player_status
 
 # Create Blueprint
 player_api = Blueprint('player_api', __name__)
 
-# Initialize global player instance
-player = MusicPlayer()
+# Initialize global audio service instance
+audio_service = AudioService()
 
 @player_api.route('/status', methods=['GET'])
 def get_status():
     """Get current player status."""
-    status = player.get_status()
+    status = audio_service.status()
     return jsonify(player_status_schema(status))
 
 @player_api.route('/play', methods=['POST'])
@@ -28,8 +28,7 @@ def play_track():
         return jsonify({'error': 'Path is required'}), 400
     
     try:
-        player.play(data['path'])
-        status = player.get_status()
+        status = audio_service.play(data['path'])
         # Emit WebSocket event
         emit_player_status(status)
         return jsonify(player_status_schema(status))
@@ -40,8 +39,7 @@ def play_track():
 def pause_playback():
     """Pause current playback."""
     try:
-        player.pause()
-        status = player.get_status()
+        status = audio_service.pause()
         # Emit WebSocket event
         emit_player_status(status)
         return jsonify(player_status_schema(status))
@@ -52,8 +50,7 @@ def pause_playback():
 def resume_playback():
     """Resume paused playback."""
     try:
-        player.resume()
-        status = player.get_status()
+        status = audio_service.resume()
         # Emit WebSocket event
         emit_player_status(status)
         return jsonify(player_status_schema(status))
@@ -64,8 +61,7 @@ def resume_playback():
 def stop_playback():
     """Stop current playback."""
     try:
-        player.stop()
-        status = player.get_status()
+        status = audio_service.stop()
         # Emit WebSocket event
         emit_player_status(status)
         return jsonify(player_status_schema(status))
@@ -80,8 +76,7 @@ def seek_position():
         return jsonify({'error': 'Position is required'}), 400
     
     try:
-        player.seek(data['position'])
-        status = player.get_status()
+        status = audio_service.seek(data['position'])
         # Emit WebSocket event
         emit_player_status(status)
         return jsonify(player_status_schema(status))
@@ -96,8 +91,7 @@ def set_volume():
         return jsonify({'error': 'Volume level is required'}), 400
     
     try:
-        player.set_volume(data['level'])
-        status = player.get_status()
+        status = audio_service.set_volume(data['level'])
         # Emit WebSocket event
         emit_player_status(status)
         return jsonify(player_status_schema(status))

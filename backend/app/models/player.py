@@ -110,14 +110,11 @@ class MusicPlayer:
     def duration(self):
         if self.player is None:
             return 0
-        # Try twice since duration might not be available immediately
+        # Get duration from media if available
         dur = self.player.get_length()
-        if dur <= 0:
-            self.player.play()
-            import time
-            time.sleep(0.1)
-            self.player.pause()
-            dur = self.player.get_length()
+        if dur <= 0 and self.media is not None:
+            # Try to get duration from media object
+            dur = self.media.get_duration()
         return dur / 1000 if dur > 0 else 0
 
     @property
@@ -148,10 +145,24 @@ class MusicPlayer:
     TODO: Better error handling
     """
     def _on_end(self, event):
+        """Handle track end event."""
         print("Track finished.")
+        # Emit WebSocket event when track ends
+        try:
+            from ..ws.events import emit_player_status
+            emit_player_status(self.get_status())
+        except ImportError:
+            pass  # WebSocket not available
 
     def _on_error(self, event):
+        """Handle playback error event."""
         print("Playback error occurred.")
+        # Emit WebSocket event on error
+        try:
+            from ..ws.events import emit_player_status  
+            emit_player_status(self.get_status())
+        except ImportError:
+            pass  # WebSocket not available
 
     
 

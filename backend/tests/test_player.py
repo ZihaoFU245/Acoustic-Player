@@ -1,8 +1,8 @@
 import sys
 import os
-import pytest
+#import pytest
 
-pytest.skip("manual player test", allow_module_level=True)
+#pytest.skip("manual player test", allow_module_level=True)
 
 backend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if backend_path not in sys.path:
@@ -74,6 +74,6 @@ def test_music_player(file_path: str):
             print("Unknown command.")
 
 if __name__ == "__main__":
-    file_path = r"D:\MyProject\Datasets\music\Taylor Swift - 1989 (Taylor's Version) (Deluxe) (2023) [24Bit-48kHz] FLAC [PMEDIA] ⭐️\09. Wildest Dreams (Taylor's Version).flac"  # Replace with your audio file path
+    file_path = r"E:\saves\Taylor Swift - THE TORTURED POETS DEPARTMENT\04. Down Bad [Explicit].flac"
 
     test_music_player(file_path)  # Replace with your audio file path
