@@ -52,3 +52,13 @@ export default tseslint.config({
   },
 })
 ```
+
+## Development
+
+This frontend expects the Flask backend to run on `http://localhost:5000`. You can adjust the API URL by editing `.env`:
+
+```bash
+VITE_API_BASE_URL=http://localhost:5000/api
+```
+
+Start the backend from the `backend` folder with `python main.py` and then run `npm run dev` here to launch the Electron shell.

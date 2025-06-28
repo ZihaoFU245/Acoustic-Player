@@ -1,8 +1,6 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import { isDev } from './utils.js';
-
-type test = String;
 
 app.on('ready', () => {
     const mainWindow = new BrowserWindow({

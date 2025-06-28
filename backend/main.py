@@ -4,7 +4,7 @@ This module serves as the entry point for the Flask API server.
 """
 from flask import Flask, jsonify
 from flask_cors import CORS
-import os
+from config import settings
 from app.api import player_api, library_api, playlist_api, lyrics_api
 from app.ws import socketio
 from app.models.database import init_db, close_db_session
@@ -49,8 +49,11 @@ def create_app():
 
 if __name__ == '__main__':
     app = create_app()
-    # Get port from environment variable or use default
-    port = int(os.environ.get('PORT', 5000))
-    
-    # Run the app with Socket.IO
-    socketio.run(app, host='0.0.0.0', port=port, debug=True)
+
+    # Run the app with Socket.IO using configured host and port
+    socketio.run(
+        app,
+        host=settings.HOST,
+        port=settings.PORT,
+        debug=settings.DEBUG,
+    )
