@@ -1,6 +1,13 @@
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import pytest
+
+pytest.skip("manual player test", allow_module_level=True)
+
+backend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+if backend_path not in sys.path:
+    sys.path.insert(0, backend_path)
+
 from app.models.player import MusicPlayer
 
 

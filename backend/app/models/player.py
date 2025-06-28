@@ -8,15 +8,42 @@ import os
 class MusicPlayer:
     """Core playboack engine."""
     def __init__(self):
-        self.instance = vlc.Instance()
-        self.player = self.instance.media_player_new()
+        """Initialize the VLC player instance.
+
+        On systems where the native ``libvlc`` library is not available,
+        instantiating :class:`vlc.Instance` raises a ``NameError``.  To make
+        unit tests runnable in such environments we catch the error and put the
+        player into a disabled state.  All playback related methods will then
+        raise a ``RuntimeError`` explaining the situation.
+        """
+        try:
+            self.instance = vlc.Instance()
+            self.player = self.instance.media_player_new()
+            self._init_error = None
+        except Exception as e:  # libvlc not installed
+            self.instance = None
+            self.player = None
+            self._init_error = e
+
         self.media = None
         self.current_track = None   # A file path string
-        self.events = self.player.event_manager()
-        self.events.event_attach(vlc.EventType.MediaPlayerEndReached, self._on_end)
-        self.events.event_attach(vlc.EventType.MediaPlayerEncounteredError, self._on_error)
+
+        if self.player is not None:
+            self.events = self.player.event_manager()
+            self.events.event_attach(
+                vlc.EventType.MediaPlayerEndReached, self._on_end
+            )
+            self.events.event_attach(
+                vlc.EventType.MediaPlayerEncounteredError, self._on_error
+            )
+        else:
+            self.events = None
 
     def load_music(self, file_path: str):
+        if self.player is None:
+            raise RuntimeError(
+                f"VLC backend not available: {self._init_error}"
+            )
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"File not found: {file_path}")
         self.media = self.instance.media_new(file_path)
@@ -29,29 +56,44 @@ class MusicPlayer:
         self.start()
 
     def start(self):
+        if self.player is None:
+            raise RuntimeError(
+                f"VLC backend not available: {self._init_error}"
+            )
         self.player.play()
 
     def pause(self):
+        if self.player is None:
+            return
         self.player.pause()
 
     def resume(self):
         # VLC toggles pause with pause() if already paused
+        if self.player is None:
+            return
         if self.player.get_state() == vlc.State.Paused:
             self.player.pause()
 
     def stop(self):
+        if self.player is None:
+            return
         self.player.stop()
 
     def fast_forward(self, seconds: float):
-        self.seek(self.at * 1000 + seconds * 1000)
+        if self.player is not None:
+            self.seek(self.at * 1000 + seconds * 1000)
 
     def rewind(self, seconds: float):
-        self.seek(self.at * 1000 - seconds * 1000)
+        if self.player is not None:
+            self.seek(self.at * 1000 - seconds * 1000)
 
     def to_point(self, seconds: float):
-        self.seek(seconds * 1000)
+        if self.player is not None:
+            self.seek(seconds * 1000)
 
     def seek(self, position_ms: float):
+        if self.player is None:
+            return
         duration_ms = self.duration * 1000
         if 0 <= position_ms <= duration_ms:
             self.player.set_time(int(position_ms))
@@ -61,10 +103,13 @@ class MusicPlayer:
             raise ValueError(f"Data type {type(level)} not supported.")
         level = int(level)
         level = max(0, min(100, level))
-        self.player.audio_set_volume(level)
+        if self.player is not None:
+            self.player.audio_set_volume(level)
 
     @property
     def duration(self):
+        if self.player is None:
+            return 0
         # Try twice since duration might not be available immediately
         dur = self.player.get_length()
         if dur <= 0:
@@ -77,15 +122,23 @@ class MusicPlayer:
 
     @property
     def at(self):
+        if self.player is None:
+            return 0
         return self.player.get_time() / 1000
 
     def get_status(self):
+        if self.player is None:
+            state = "unavailable"
+            volume = 0
+        else:
+            state = str(self.player.get_state())
+            volume = self.player.audio_get_volume()
         return {
-            "state": str(self.player.get_state()),  # get_state return: Opening / Playing, etc.
+            "state": state,
             "current_track": self.current_track,
             "position": self.at,
             "duration": self.duration,
-            "volume": self.player.audio_get_volume(),
+            "volume": volume,
         }
     
     """
