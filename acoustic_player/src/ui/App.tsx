@@ -1,31 +1,87 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
+import './App.css';
+import type { Track } from './api.ts';
+import { getTracks, scanDirectory, playTrack } from './api.ts';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [tracks, setTracks] = useState<Track[]>([]);
+  const [scanPath, setScanPath] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loadLibrary();
+  }, []);
+
+  async function loadLibrary() {
+    try {
+      const data = await getTracks();
+      setTracks(data);
+    } catch (err) {
+      console.error('Failed to load tracks', err);
+    }
+  }
+
+  async function handleScan() {
+    if (!scanPath) return;
+    setLoading(true);
+    try {
+      await scanDirectory(scanPath);
+      await loadLibrary();
+    } catch (err) {
+      console.error('Failed to scan folder', err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handlePlay(path: string) {
+    try {
+      await playTrack(path);
+    } catch (err) {
+      console.error('Failed to play track', err);
+    }
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="container" id="content">
+      <div className="section" id="library-section">
+        <h5>Library</h5>
+        <div className="row">
+          <div className="input-field col s9">
+            <input
+              id="scan-path"
+              type="text"
+              value={scanPath}
+              onChange={(e) => setScanPath(e.target.value)}
+              placeholder="Path to music folder"
+            />
+          </div>
+          <div className="input-field col s3">
+            <button
+              id="scan-btn"
+              className="btn waves-effect waves-light"
+              onClick={handleScan}
+              disabled={loading}
+            >
+              {loading ? 'Scanning...' : 'Scan'}
+            </button>
+          </div>
+        </div>
+        <ul id="track-list" className="collection">
+          {tracks.map((t) => (
+            <li
+              key={t.id}
+              className="collection-item"
+              onClick={() => handlePlay(t.path)}
+              style={{ cursor: 'pointer' }}
+            >
+              {t.artist} - {t.title}
+            </li>
+          ))}
+        </ul>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
