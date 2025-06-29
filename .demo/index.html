@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Acoustic Player</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #FAF7F7;
+        }
+        .material-icons {
+            font-size: 24px;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #E0E0E0;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen">
+<div class="flex flex-1 overflow-hidden">
+<aside class="w-1/4 bg-gray-50 p-8 flex flex-col">
+<h1 class="text-4xl font-bold text-gray-800 mb-12">Acoustic Player</h1>
+<nav class="space-y-6 mb-12">
+  <a class="flex items-center text-gray-700 hover:text-pink-500 transition-colors group" href="#">
+    <span class="material-icons mr-4 group-hover:text-pink-500">home</span>
+    <span class="text-lg font-medium">Home</span>
+  </a>
+  <a class="flex items-center text-gray-700 hover:text-pink-500 transition-colors group" href="#">
+    <span class="material-icons mr-4 group-hover:text-pink-500">article</span>
+    <span class="text-lg font-medium">New</span>
+  </a>
+  <a class="flex items-center text-pink-500 transition-colors group" href="#">
+    <span class="material-icons mr-4 text-pink-500">history</span>
+    <span class="text-lg font-medium">Recently Played</span>
+  </a>
+</nav>
+<div>
+  <h3 class="text-xl font-semibold text-gray-800 mb-4">Recently Played</h3>
+  <div class="space-y-4 max-h-96 overflow-y-auto pr-2">
+    <div class="flex items-center">
+      <img alt="Album art for Morning Light" class="w-12 h-12 rounded-lg mr-4 object-cover bg-gradient-to-br from-pink-300 to-purple-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAz1pEq_1dDRWBx9VLEc4p7CBTtSjSXh_oE08-OIZzJuyBshtBRPe8G6KKtvjVUlGeooM_Ow_KqxIeD8cNkMUjIUQtfsD5LLmYKqkh9IWwrZp7H--8ieyCsY3jo1C8Io0ifElgkQSy7obWs11r_PBTydnBRUBdk-p4qRoAm1R8ajMea2pEROgj8weomqlCD9B0niGjqBlzNF2FiPlGgDlpIUwdy_AQnuK3-lQ7paeDbXa6EL7EnQQktxq7etT1tUerqY8lq64mTZOw"/>
+      <div>
+        <p class="font-medium text-gray-800">Morning Light</p>
+        <p class="text-sm text-gray-500">John Doe</p>
+      </div>
+    </div>
+    <div class="flex items-center">
+      <img alt="Album art for Lost in the City" class="w-12 h-12 rounded-lg mr-4 object-cover bg-gradient-to-br from-pink-400 to-orange-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDl9SC_xy8B4oqrnfJm8LPLgkRDdeCioMvWoe52Tup6vOHYR5vAd91Ws80sH_ynGjXU33hiSg4eIdMshuy_MYLt-HEO8njPxZMuXO0SrnDdwpgwlnmycehBbYNH81V1r2p6IfHfbiezEjDfk_mlPXtb8kOPKZHtp1a1iBH77uOujVvdgWibjZW8yjc_LrDAVu1lnO3rnMiFYUJWzx3zCO9CpQMIjXydfrBJiCHrQuR2JMXQ7Uqez89ePrd5JpKmiiKaXXaiaEw-IOE"/>
+      <div>
+        <p class="font-medium text-gray-800">Lost in the City</p>
+        <p class="text-sm text-gray-500">Michael Brown</p>
+      </div>
+    </div>
+    <div class="flex items-center">
+      <img alt="Album art for Chasing Dreams" class="w-12 h-12 rounded-lg mr-4 object-cover bg-gradient-to-br from-purple-300 to-indigo-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMd3VPIXPc4o1thltY7jasOq1hRhyhCWI75kexaMs0MscZXoxmpxaif1MySEZakZ6RPWAtH3qU6E3jNZQcWzLQKmEl6ebmLhOfnurFky0lWiBBKAkL9MmVsLH7nB0tmDxPcYOq32jM9yzSWP44h2_2DAI2f3ON6tuDQpDwfX0I9CIS72o-Et-14yLpUg3uTjYE7fQ9zO-d_JPLuP4c-LWMsUgKAVJCxXwqYij2jtKVI9BvgyN08MRlcN3JOKCOLOQZg2svMM0ILv8"/>
+      <div>
+        <p class="font-medium text-gray-800">Chasing Dreams</p>
+        <p class="text-sm text-gray-500">Emily White</p>
+      </div>
+    </div>
+    <div class="flex items-center">
+      <img alt="Album art for Wandering Soul" class="w-12 h-12 rounded-lg mr-4 object-cover bg-gradient-to-br from-indigo-300 to-blue-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCO8VTU_SHAeIUCUuXOpJoWnL0zODZftYzNF91x9a68vfQ9LPFmUU9hNIQEScFPORUHDG_AX2rDWgracCoBAMhKS4fbk_ZH2vyEeF_Dyyd-9lHIJUnHtjm0vVBDpKNrt6MkjXUrunenrbLVsHhJD6QgUJFsemf3iin7cA-3xbtU9UaWcuV9mS8Ozs-NhFYY3iMK5plWJxWqXsc-7meMMxlmr_5CdeRWS_mxK9G7HGOUrcFproa9_h8gImyKPNjqm9B-qaODJ6xGls4"/>
+      <div>
+        <p class="font-medium text-gray-800">Wandering Soul</p>
+        <p class="text-sm text-gray-500">David Taylor</p>
+      </div>
+    </div>
+    <!-- More fake recently played -->
+    <div class="flex items-center">
+      <img alt="Album art for Ocean Breeze" class="w-12 h-12 rounded-lg mr-4 object-cover bg-gradient-to-br from-blue-300 to-green-300" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=facearea&w=128&q=80"/>
+      <div>
+        <p class="font-medium text-gray-800">Ocean Breeze</p>
+        <p class="text-sm text-gray-500">Sophia Lee</p>
+      </div>
+    </div>
+    <div class="flex items-center">
+      <img alt="Album art for Golden Hour" class="w-12 h-12 rounded-lg mr-4 object-cover bg-gradient-to-br from-yellow-200 to-orange-300" src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=facearea&w=128&q=80"/>
+      <div>
+        <p class="font-medium text-gray-800">Golden Hour</p>
+        <p class="text-sm text-gray-500">Liam Smith</p>
+      </div>
+    </div>
+    <div class="flex items-center">
+      <img alt="Album art for Night Drive" class="w-12 h-12 rounded-lg mr-4 object-cover bg-gradient-to-br from-gray-400 to-blue-900" src="https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=facearea&w=128&q=80"/>
+      <div>
+        <p class="font-medium text-gray-800">Night Drive</p>
+        <p class="text-sm text-gray-500">Olivia Green</p>
+      </div>
+    </div>
+    <div class="flex items-center">
+      <img alt="Album art for Summer Rain" class="w-12 h-12 rounded-lg mr-4 object-cover bg-gradient-to-br from-blue-200 to-green-200" src="https://images.unsplash.com/photo-1465101178521-c1a9136a3c8b?auto=format&fit=facearea&w=128&q=80"/>
+      <div>
+        <p class="font-medium text-gray-800">Summer Rain</p>
+        <p class="text-sm text-gray-500">Noah Wilson</p>
+      </div>
+    </div>
+    <div class="flex items-center">
+      <img alt="Album art for City Lights" class="w-12 h-12 rounded-lg mr-4 object-cover bg-gradient-to-br from-yellow-300 to-purple-400" src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=facearea&w=128&q=80"/>
+      <div>
+        <p class="font-medium text-gray-800">City Lights</p>
+        <p class="text-sm text-gray-500">Mia Clark</p>
+      </div>
+    </div>
+    <div class="flex items-center">
+      <img alt="Album art for Into the Wild" class="w-12 h-12 rounded-lg mr-4 object-cover bg-gradient-to-br from-green-300 to-yellow-200" src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=facearea&w=128&q=80"/>
+      <div>
+        <p class="font-medium text-gray-800">Into the Wild</p>
+        <p class="text-sm text-gray-500">Lucas King</p>
+      </div>
+    </div>
+  </div>
+</div>
+</aside>
+<main class="flex-1 p-8 bg-white overflow-y-auto">
+<div class="mb-8">
+<div class="relative">
+<span class="material-icons absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">search</span>
+<input class="w-full bg-gray-100 text-gray-700 placeholder-gray-400 py-3 pl-12 pr-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400" placeholder="Search for songs, artists...." type="text"/>
+</div>
+</div>
+<h2 class="text-3xl font-semibold text-gray-800 mb-6">Lyrics</h2>
+<div class="text-gray-600 leading-relaxed space-y-3 pr-4 max-h-[calc(100vh-280px)] overflow-y-auto">
+<p>The sun is setting and</p>
+<p>I'm feeling low</p>
+<p>My heart is heavy, as</p>
+<p>the shadows grow</p>
+<p>In this blue evening, I</p>
+<p>find my solace</p>
+<p>Through the darkness, I</p>
+<p>will find my way</p>
+<p>Tomorrow brings another</p>
+<p>day</p>
+<p>Stars will guide me</p>
+<p>through the night</p>
+<p>Morning comes with</p>
+<p>golden light</p>
+<p>In this moment, I am free</p>
+<p>Lost in music's melody</p>
+<p>Every note tells my story</p>
+<p>A symphony of life, a</p>
+<p>beautiful glory</p>
+</div>
+</main>
+<aside class="w-1/4 bg-gray-50 p-8 flex flex-col">
+<div class="mb-8">
+<div class="bg-gradient-to-br from-pink-300 via-purple-300 to-indigo-300 p-6 rounded-xl shadow-lg text-center">
+<img alt="Album art for A Blue Evening" class="w-48 h-48 rounded-lg mx-auto mb-6 object-cover shadow-md bg-white opacity-75" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWLxfQTuSzJQz75xTx0DE5wAVl4kUgnK5b-gFPxMSKvNifFEBiHT32o3VW08nP_Xm3zMLuHx5fVBA0AOA1SFOsdSduk-rLlKM4JNyve9vlQXnomKFKvXSf86JP2FO3D8WSG7s9ZjyjJ_BIwCtgMzKVxg45yH_2yU12FxvAG0T7dIy4dYmOoHAvDsYx2Wae2nLrwxJahb5qeWvIYt2830ZAh5-SQl-osn3AmxNrdg-zC2Gdak3bUpfaPMImOCsqD4wWM_4YIWuX-kw"/>
+<h3 class="text-2xl font-semibold text-white">A Blue Evening</h3>
+<p class="text-gray-100 mb-1">John Doe</p>
+<p class="text-sm text-gray-200">Midnight Reflections</p>
+</div>
+</div>
+<div class="mt-auto">
+<div class="bg-white p-6 rounded-xl shadow-lg">
+<img alt="Small album art for A Blue Evening" class="w-full h-40 rounded-lg mb-4 object-cover bg-gradient-to-br from-purple-400 to-pink-400 opacity-80" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAE_gTfSMP9d8qWTFVsxHvKKy0ALjKDrYcaxS6yE6Mwh3eB0CEdr-6IsjVQcLZ8AgaaXFF7iSZ7q4pK9wOim1br4mSOC4QRLj80MsnHO8dyHCcNseyhyqn7L4JzTw2plWcPvYnF2Kvw15YRJjjFgGxXjfqwsqwAmjaUF74fentkUh05IIGDHgTmyCObBw2ZcnmVidZgTJvCJF-P9pKeMXCU-Xe8I_iIaOkY0bsxETkdsyIY6x1Z_60fgq79H36AzHwdxDCAN40RyVg"/>
+<h3 class="text-xl font-semibold text-gray-800">A Blue Evening</h3>
+<p class="text-gray-600">John Doe</p>
+<p class="text-sm text-gray-500 mt-1">3:42</p>
+</div>
+</div>
+</aside>
+</div>
+<footer class="bg-white border-t border-gray-200 px-8 py-4 flex items-center justify-between">
+<div class="flex items-center">
+<img alt="Currently playing album art for A Blue Evening" class="w-12 h-12 rounded-lg mr-4 object-cover bg-gradient-to-br from-pink-300 to-purple-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZeUw8ZnCoLk0UcxR-neA4OY_TaB3wLKgJIzcYhSSt9_PeHtfMDAfHWe84UxQzvklIH5dHgdbUUMxRxkHxRtCHFGTayy0zs7wAlb7nWCYrxhj5ufZbE4wMnBxWR2-kFVgI-XMSrinU8Xppi-tTkO-lWBswzkk0wPQbD0py9a1yB2C88UCf3uz-rJM1IifTcUXyXaKfqRQP34pJs7h3B5cdRmqDxgPyO00DrdDrF3-97JoQYwqvKN5LMj7I3mrjAcDtlEgqKP7BB8M"/>
+<div>
+<p class="font-medium text-gray-800">A Blue Evening</p>
+<p class="text-sm text-gray-500">John Doe</p>
+</div>
+</div>
+<div class="flex flex-col items-center w-1/3">
+<div class="flex items-center space-x-6 mb-1">
+<button class="text-gray-600 hover:text-pink-500 transition-colors">
+<span class="material-icons">skip_previous</span>
+</button>
+<button class="bg-pink-500 text-white p-3 rounded-full shadow-md hover:bg-pink-600 transition-colors">
+<span class="material-icons">play_arrow</span>
+</button>
+<button class="text-gray-600 hover:text-pink-500 transition-colors">
+<span class="material-icons">skip_next</span>
+</button>
+</div>
+<div class="flex items-center w-full">
+<span class="text-xs text-gray-500 mr-2">1:32</span>
+<div class="w-full h-1.5 bg-gray-200 rounded-full">
+<div class="h-1.5 bg-pink-500 rounded-full" style="width: 40%;"></div>
+</div>
+<span class="text-xs text-gray-500 ml-2">3:42</span>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<button class="text-gray-600 hover:text-pink-500 transition-colors">
+<span class="material-icons">shuffle</span>
+</button>
+<button class="text-gray-600 hover:text-pink-500 transition-colors">
+<span class="material-icons">volume_up</span>
+</button>
+<div class="w-20 h-1 bg-gray-200 rounded-full">
+<div class="h-1 bg-pink-500 rounded-full" style="width: 70%;"></div>
+</div>
+<button class="text-gray-600 hover:text-pink-500 transition-colors">
+<span class="material-icons">headset</span>
+</button>
+</div>
+</footer>
+
+</body></html>
