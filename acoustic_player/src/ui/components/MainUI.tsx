@@ -45,7 +45,7 @@ function MainUI() {
   }
 
   return (
-    <div className="app-container">
+    <div className="app-container main-layout">
       <nav className="sidebar left">
         <div className="logo">
           <span>Acoustic Player</span>
@@ -75,9 +75,9 @@ function MainUI() {
           </div>
         </header>
 
-        <main className="main-content color-bg">
+        <main className="main-content color-bg" style={{ paddingBottom: '64px' }}>
           <div className="content-grid">
-            <div className="now-playing-section">
+            <div className="now-playing-section section">
               <div className="now-playing-card">
                 <div className="album-art large" />
                 <div className="track-info">
@@ -91,9 +91,9 @@ function MainUI() {
               </div>
             </div>
 
-            <div className="lyrics-section">
+            <div className="lyrics-section section">
               <div className="lyrics-header">
-                <h3>Lyrics</h3>
+                <h3 className="section-title">Lyrics</h3>
               </div>
               <div className="lyrics-content">
                 <div className="lyrics-scroll">
@@ -102,9 +102,9 @@ function MainUI() {
               </div>
             </div>
 
-            <div className="music-library-section">
+            <div className="music-library-section section">
               <div className="section-header">
-                <h3>Library</h3>
+                <h3 className="section-title">Library</h3>
               </div>
               <div className="track-list">
                 {tracks.map((t) => (
