@@ -1,30 +1,35 @@
 import React, { useEffect, useState } from 'react'
-import './demo-style.css'
-import LeftMenuBar from './components/LeftMenuBar'
-import TopBar from './components/TopBar'
-import QueueBar from './components/QueueBar'
+import LeftSidebar from './components/new/LeftSidebar'
+import TopBar from './components/new/TopBar'
+import RightSidebar from './components/new/RightSidebar'
 import BottomPlayerBar from './components/BottomPlayerBar'
-import MainArea from './components/MainArea'
+import MainContent from './components/new/MainContent'
+import { connect } from './socket'
 import type { Album, Track } from './api/playerApi'
 import {
   getAlbums,
   play,
   pause,
   getCurrentTrack,
-  getQueue,
   searchMusic,
   addFolder
 } from './api/playerApi'
 
 function App() {
   const [albums, setAlbums] = useState<Album[]>([])
-  const [queue, setQueue] = useState<Track[]>([])
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [page, setPage] = useState('home')
 
   useEffect(() => {
     loadInitial()
+    const sock = connect((st) => {
+      setCurrentTrack(st.track)
+      setIsPlaying(st.is_playing)
+    })
+    return () => {
+      sock.disconnect()
+    }
   }, [])
 
   async function loadInitial() {
@@ -34,8 +39,6 @@ function App() {
       const status = await getCurrentTrack()
       setCurrentTrack(status.track)
       setIsPlaying(status.is_playing)
-      const q = await getQueue()
-      setQueue(q)
     } catch (err) {
       console.error('Failed to load data', err)
     }
@@ -75,23 +78,25 @@ function App() {
   }
 
   return (
-    <div className="app-container">
-      <LeftMenuBar currentPage={page} onNavigate={setPage} />
-      <div className="content-area">
-        <TopBar onSearch={handleSearch} onAddFolder={handleAddFolder} />
-        <MainArea albums={albums} onSelectAlbum={() => {}} />
+    <div className="relative flex min-h-screen flex-col bg-white overflow-x-hidden">
+      <div className="flex flex-1 h-0 min-h-0 grow">
+        <LeftSidebar currentPage={page} onNavigate={setPage} />
+        <div className="flex-1 flex flex-col min-h-0 ml-64 mr-80" style={{minWidth:0}}>
+          <TopBar onSearch={handleSearch} onAddFolder={handleAddFolder} />
+          <MainContent albums={albums} onSelectAlbum={() => {}} />
+          <BottomPlayerBar
+            currentTrack={currentTrack}
+            isPlaying={isPlaying}
+            onPlay={() => currentTrack && handlePlay(currentTrack.path)}
+            onPause={handlePause}
+            onNext={() => {}}
+            onPrev={() => {}}
+            onSeek={() => {}}
+            onVolumeChange={() => {}}
+          />
+        </div>
+        <RightSidebar currentTrack={currentTrack} />
       </div>
-      <QueueBar queue={queue} currentTrack={currentTrack} />
-      <BottomPlayerBar
-        currentTrack={currentTrack}
-        isPlaying={isPlaying}
-        onPlay={() => currentTrack && handlePlay(currentTrack.path)}
-        onPause={handlePause}
-        onNext={() => {}}
-        onPrev={() => {}}
-        onSeek={() => {}}
-        onVolumeChange={() => {}}
-      />
     </div>
   )
 }
