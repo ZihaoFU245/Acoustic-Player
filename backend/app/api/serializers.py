@@ -1,8 +1,10 @@
-"""
-Serializers for API responses
+"""Serializers for API responses.
+
 This module contains utility functions to convert internal data structures
 into JSON-friendly dictionaries for API responses.
 """
+
+import os
 
 def player_status_schema(player_status):
     """
@@ -34,6 +36,22 @@ def track_schema(track):
     """
     if not track:
         return None
+
+    # If a plain file path string is provided, return minimal info
+    if isinstance(track, str):
+        base = os.path.basename(track)
+        return {
+            'id': None,
+            'path': track,
+            'title': base,
+            'artist': '',
+            'album': '',
+            'duration': 0,
+            'track_num': 0,
+            'genre': '',
+            'album_art_path': None,
+            'has_thumbnail': False
+        }
         
     track_id = track.get('id') if isinstance(track, dict) else getattr(track, 'id', None)
     

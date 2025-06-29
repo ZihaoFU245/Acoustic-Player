@@ -1,8 +1,8 @@
 import sys
 import os
-import pytest
+#import pytest
 
-pytest.skip("manual player test", allow_module_level=True)
+#pytest.skip("manual player test", allow_module_level=True)
 
 backend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if backend_path not in sys.path:
@@ -14,7 +14,7 @@ from app.models.player import MusicPlayer
 def test_music_player(file_path: str):
     player = MusicPlayer() # Increased blocksize
     player.load_music(file_path)
-    print("Commands: play, pause, resume, stop, ff <sec>, rw <sec>, seek <sec>,set <1-100 volumn> duration, at, quit")
+    print("Commands: play, pause, resume, stop, ff <sec>, rw <sec>, seek <sec>,set <1-100 volume> duration, at, quit")
     while True:
         cmd = input("Enter command: ").strip().lower()
         if cmd == "play":
@@ -67,13 +67,13 @@ def test_music_player(file_path: str):
             try:
                 vol = float(cmd.split(sep=' ')[1])
                 player.set_volume(vol)
-                print(f"Set volumn as {vol}")
+                print(f"Set volume as {vol}")
             except Exception as e:
                 print(f"Invalid input: {e}")
         else:
             print("Unknown command.")
 
 if __name__ == "__main__":
-    file_path = r"D:\MyProject\Datasets\music\Taylor Swift - 1989 (Taylor's Version) (Deluxe) (2023) [24Bit-48kHz] FLAC [PMEDIA] ⭐️\09. Wildest Dreams (Taylor's Version).flac"  # Replace with your audio file path
+    file_path = r"E:\saves\Taylor Swift - THE TORTURED POETS DEPARTMENT\04. Down Bad [Explicit].flac"
 
     test_music_player(file_path)  # Replace with your audio file path
