@@ -6,7 +6,7 @@ import vlc
 import os
 
 class MusicPlayer:
-    """Core playboack engine."""
+    """Core playback engine."""
     def __init__(self):
         """Initialize the VLC player instance.
 
